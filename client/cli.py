@@ -10,19 +10,19 @@ def openstack():
 
 @openstack.group()
 def project():
-    """Manages ships."""
+    """Manages users."""
 
 
 @project.command('create')
 @click.argument('name')
 @click.option('--description', '-d', help='Description of the project.')
-def project_create(name):
+def project_create(name, description):
     """Creates a new ship."""
     click.echo('NOT IMPLEMENTED. Created project %s' % name)
 
 
 @project.command('createBunch')
-@click.argument('file', help='JSON file with project information')
+@click.argument('file')
 def project_create(file):
     """Creates a new ship."""
     click.echo('NOT IMPLEMENTED. Created project from a JSON file %s' % file)
@@ -30,19 +30,18 @@ def project_create(file):
 
 @openstack.group()
 def user():
-    """Manages ships."""
-
+    """Manages users."""
 
 @user.command('create')
 @click.argument('name')
 @click.option('--description', '-d', help='Description of the user.')
-def user_create(name):
+def user_create(name,description):
     """Creates a new ship."""
     click.echo('NOT IMPLEMENTED. Created user %s' % name)
 
 
 @user.command('createBunch')
-@click.argument('file', help='JSON file with user information')
+@click.argument('file')
 def user_create(file):
     """Creates a new ship."""
     click.echo('NOT IMPLEMENTED. Created user from a JSON file %s' % file)
