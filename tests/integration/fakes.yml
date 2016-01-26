@@ -1,0 +1,11 @@
+---
+list_projects:
+  - name: "lip_demo1"
+    description: "LIP users"
+  - name: "lip_demo2"
+    description: "LIP users"
+
+list_users:
+  - name: name_demo_externalfile
+    email: name_demo@externalfile
+    project: demo
