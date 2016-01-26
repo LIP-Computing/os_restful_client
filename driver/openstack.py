@@ -24,11 +24,10 @@ from ooi import utils
 from occinet.wsgi import parsers
 
 
-class OpenStackNet(helpers.BaseHelper):
-    """Class to interact with the neutron API."""
+class OpenStackDriver(object):
+    """Class to interact with the OS API."""
 
     def __init__(self, app, neutron_version, neutron_endpoint):
-        super(OpenStackNet, self).__init__(app, neutron_version)
         self.neutron_endpoint = neutron_endpoint
 
     translation = {"network": {"occi.core.title":"name",

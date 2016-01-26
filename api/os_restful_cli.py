@@ -14,25 +14,12 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-from occinet.api.helpers import OpenStackNet  # it was import ooi.api.helpers
-from occinet.infrastructure.network_extend import Network
-from occinet.api import Controller as ControlerBase
-from ooi.occi.core import collection
-from ooi import exception
+from credentials import session
+from driver import openstack
 
-
-def _build_network(name, prefix=None):
-    if prefix:
-        network_id = '/'.join([prefix, name])
-    else:
-        network_id = name
-    return Network(title=name, id=network_id, state="active")
-
-
-class Controller(ControlerBase):
+class Controller(object):
     def __init__(self, *args, **kwargs):
-        super(Controller, self).__init__(*args, **kwargs)
-        self.os_helper = OpenStackNet(
+        self.os_helper = openstack.OpenStackDriver(
             self.app,
             self.openstack_version,
             self.neutron_endpoint
@@ -49,32 +36,15 @@ class Controller(ControlerBase):
             attributes = None
         return attributes
 
-    @staticmethod
-    def _get_network_resources(networks):# fixme(jorgesece): those attributes should be mapped in driver to occi attr.
-        """Create network instances from network in json format
-        :param networks: networks objects provides by the cloud infrastructure
-        """
-        occi_network_resources = []
-        if networks:
-            for s in networks:
-                if "subnet_info" in s:# fixme(jorgesece) only works with the first subnetwork
-                    s = Network(title=s["name"], id=s["id"], address=s["subnet_info"]["cidr"],
-                                ip_version=s["subnet_info"]["ip_version"], gateway=s["subnet_info"]["gateway_ip"])
-                else:
-                    s = Network(title=s["name"], id=s["id"])
-                occi_network_resources.append(s)
-        return occi_network_resources
-
     def index(self, req, parameters=None):
         """List networks filtered by parameters
         :param req: request object
         :param parameters: request parameters
         """
         attributes = self._filter_attributes(parameters)
-        occi_networks = self.os_helper.index(req, attributes)
-        occi_network_resources = self._get_network_resources(occi_networks)
+        r = self.os_helper.index(req, attributes)
 
-        return collection.Collection(resources=occi_network_resources)
+        return r
 
     def show(self, req, id, parameters=None):
         """Get network details
