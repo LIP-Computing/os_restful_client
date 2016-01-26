@@ -22,6 +22,7 @@ from keystoneclient.auth.identity import v3
 
 
 
+import os
 
 
 class KeySession(object):

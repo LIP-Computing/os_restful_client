@@ -15,15 +15,18 @@
 # under the License.
 import mock
 from client import cli
+from credentials.session import KeySession
 
 import tests
-import api
 
 
 class TestCommandProject(tests.TestCaseCommandLine):# todo(jorgesece): create as mock
 
     def setUp(self):
         super(TestCommandProject, self).setUp()
+        # project_id = "484d3a7eeb4f4462b329c1d0463cf324"
+        # app = KeySession().create_keystone("admin", "stack1", project_id)
+        # token = app.auth_token # fixme(jorgesece): check what to do with auth ¿password or token?
 
     def test_no_exist(self):
         result = self.runner.invoke(cli.project, ['Noexist'])
@@ -33,6 +36,11 @@ class TestCommandProject(tests.TestCaseCommandLine):# todo(jorgesece): create as
     #@mock.patch.object(api.projects,"create") todo(jorgesece): follow this way to make mock
     def test_project(self):
         result = self.runner.invoke(cli.project)
+        self.assertEqual(result.exit_code,0)
+        self.assertIsNone(result.exception)
+
+    def test_project_list(self):
+        result = self.runner.invoke(cli.project, ['list'])
         self.assertEqual(result.exit_code,0)
         self.assertIsNone(result.exception)
 

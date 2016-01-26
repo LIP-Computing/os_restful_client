@@ -13,27 +13,20 @@
 # WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 # License for the specific language governing permissions and limitations
 # under the License.
-#
+import testtools
+import mock # todo(jorgesece): add to de testing requirements.
 
-import os
-
-auth_variables = ['OS_AUTH_URL',
-                  'OS_TOKEN',
-                  'OS_PORT',
-                  "OS_VERSION"
-                 ]
+from driver.openstack import OpenStackDriver
+from api.projects import Controller
 
 
-def check_identity_variables():
-    for var in auth_variables:
-        if not os.getenv(var, None):
-            return False
-    return True
+class TestCaseAPIController(testtools.TestCase):
 
+    def setUp(self):
+        super(TestCaseAPIController, self).setUp()
+        self.controller = Controller(mock.MagicMock())
 
-def get_identity_variables():
-    var_list = {}
-    for var in auth_variables:
-        val = os.getenv(var)
-        var_list[var]= val
-    return var_list
+    @mock.patch.object(OpenStackDriver, "index")
+    def test_index(self, m_index):
+        result = self.controller.index(None)
+        self.assertIsNotNone(result)

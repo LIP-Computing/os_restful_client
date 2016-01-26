@@ -28,6 +28,6 @@ class TestCaseCommandLine(testtools.TestCase):# todo(create as mock)
         self.runner = CliRunner()
 
     def test_openstack(self):
-        result = self.runner.invoke(cli.openstack)
+        result = self.runner.invoke(cli.openstackcli)
         self.assertEqual(result.exit_code,0)
         self.assertIsNone(result.exception)
