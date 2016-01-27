@@ -49,19 +49,19 @@ class Controller(object):
     #     occi_network_resources = self._get_network_resources([resp])
     #     return occi_network_resources[0]
     #
-    # def create(self, req, parameters, body=None): # todo(jorgesece): manage several creation
-    #     """Create a network instance in the cloud
-    #     :param: req: request object
-    #     :param parameters: request parameters with the new network attributes
-    #     :param body: body request (not used)
-    #     """
-    #     # FIXME(jorgesece): Body is coming from OOI resource class and is not used
-    #     attributes = self._filter_attributes(parameters)
-    #     net = self.os_helper.create_network(req, attributes)
-    #     occi_network_resources = self._get_network_resources([net])
-    #
-    #     return occi_network_resources[0]
-    #
+    def create(self, req, parameters, body=None): # todo(jorgesece): manage several creation
+        """Create a network instance in the cloud
+        :param: req: request object
+        :param parameters: request parameters with the new network attributes
+        :param body: body request (not used)
+        """
+        # FIXME(jorgesece): Body is coming from OOI resource class and is not used
+        attributes = self._filter_attributes(parameters)
+        net = self.os_helper.create_network(req, attributes)
+        occi_network_resources = self._get_network_resources([net])
+
+        return occi_network_resources[0]
+
     # def delete(self, req, parameters): # todo(jorgesece): manage several deletion
     #     """delete networks which satisfy the parameters
     #     :param parameters:

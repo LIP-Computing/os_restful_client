@@ -47,3 +47,10 @@ def join_url(base, parts):
             p = p[1:]
         url = urlparse.urljoin(url, p)
     return url
+
+
+def get_resource_from_path(str, delete_last):
+    out = str.rsplit('/', 1)[-1]
+    if delete_last:
+        return out[:-1]
+    return out
