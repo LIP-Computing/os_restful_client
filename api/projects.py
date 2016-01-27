@@ -13,7 +13,7 @@
 # WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 # License for the specific language governing permissions and limitations
 # under the License.
-import exceptions
+
 
 import api
 from driver.openstack import OpenStackDriver
@@ -27,7 +27,7 @@ class Controller(object):
            # print "Error OS variables"
            # raise
             # fixme(jorgesece): manage properly
-            self.identity = {'OS_AUTH_URL':'127.0.0.23','OS_PORT': '5000', "OS_VERSION": 'v3','OS_TOKEN':'1a83b395ee334b768f22e0811c44cf1b'}
+            self.identity = {'OS_AUTH_URL':'127.0.0.23','OS_PORT': '5000', "OS_VERSION": 'v3','OS_TOKEN':'050aa25281574aa6be07e206a7c6ac9a'}
         self.os_helper = OpenStackDriver(self.identity['OS_AUTH_URL'], self.identity['OS_PORT'], self.identity["OS_VERSION"],self.identity['OS_TOKEN'])
 
     def index(self, parameters=None):
@@ -49,18 +49,15 @@ class Controller(object):
     #     occi_network_resources = self._get_network_resources([resp])
     #     return occi_network_resources[0]
     #
-    def create(self, req, parameters, body=None): # todo(jorgesece): manage several creation
+    def create(self, parameters):# todo(jorgesece): manage several creation
         """Create a network instance in the cloud
         :param: req: request object
         :param parameters: request parameters with the new network attributes
-        :param body: body request (not used)
         """
-        # FIXME(jorgesece): Body is coming from OOI resource class and is not used
-        attributes = self._filter_attributes(parameters)
-        net = self.os_helper.create_network(req, attributes)
-        occi_network_resources = self._get_network_resources([net])
+        path = '/projects'
+        net = self.os_helper.create(path, parameters)
 
-        return occi_network_resources[0]
+        return net
 
     # def delete(self, req, parameters): # todo(jorgesece): manage several deletion
     #     """delete networks which satisfy the parameters

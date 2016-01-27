@@ -16,6 +16,9 @@
 
 import click
 
+from driver import utils
+from driver import exception
+
 from api.projects import Controller as ProjectController
 
 
@@ -43,15 +46,28 @@ def project_list():
 @click.argument('name')
 @click.option('--description', '-d', help='Description of the project.')
 def project_create(name, description):
-    """Creates a new ship."""
-    click.echo('NOT IMPLEMENTED. Created project %s' % name)
+    """Creates a new project."""
+    project_controller = ProjectController()
+    parameters = {'name':name}
+    if description:
+        parameters['description'] = description
+    result = project_controller.create(parameters=parameters)
+    click.echo(result)
 
 
 @project.command('createBunch')
 @click.argument('file')
+@click.option('--format', '-f',  default='json', help='Format file (json or yaml).')
 def project_create(file):
-    """Creates a new ship."""
-    click.echo('NOT IMPLEMENTED. Created project from a JSON file %s' % file)
+    """Creates new projects from a file."""
+    project_controller = ProjectController()
+    try:
+        parameters = utils.parse_file(file, format)
+    except Exception as e:
+        raise exception.ClientException(e)
+
+    result = project_controller.create(parameters=parameters)
+    click.echo(result)
 
 
 @openstackcli.group()

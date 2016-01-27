@@ -16,6 +16,8 @@
 
 import six
 import six.moves.urllib.parse as urlparse
+import json
+import yaml
 
 
 def utf8(value):
@@ -54,3 +56,17 @@ def get_resource_from_path(str, delete_last):
     if delete_last:
         return out[:-1]
     return out
+
+
+def parse_file (file, format):
+    fp = open(file)
+    if not fp:
+        raise "File not found or corrupt"
+    if format == 'json':
+        str = json.load(file)
+    elif format == 'yaml':
+        str = yaml.load(file('config.yaml', 'r'))
+    else:
+        raise "Invalid format"
+
+    return str

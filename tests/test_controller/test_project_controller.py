@@ -32,6 +32,6 @@ class TestCaseAPIController(testtools.TestCase):
         self.assertIsNotNone(result)
 
     @mock.patch.object(OpenStackDriver, "create")
-    def test_index(self, m_create):
+    def test_create(self, m_create):
         result = self.controller.create(None)
         self.assertIsNotNone(result)

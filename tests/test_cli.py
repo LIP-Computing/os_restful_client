@@ -15,6 +15,7 @@
 # under the License.
 import mock
 from client import cli
+from api import projects
 from credentials.session import KeySession
 
 import tests
@@ -39,12 +40,14 @@ class TestCommandProject(tests.TestCaseCommandLine):# todo(jorgesece): create as
         self.assertEqual(result.exit_code,0)
         self.assertIsNone(result.exception)
 
-    def test_project_list(self):
+    @mock.patch.object(projects.Controller, "index")
+    def test_project_list(self, m_index):
         result = self.runner.invoke(cli.project, ['list'])
         self.assertEqual(result.exit_code,0)
         self.assertIsNone(result.exception)
 
-    def test_project_create(self):
+    @mock.patch.object(projects.Controller, "create")
+    def test_project_create(self, m_create):
         result = self.runner.invoke(cli.project, ['create','name1'])
         self.assertEqual(result.exit_code,0)
         self.assertIsNone(result.exception)
