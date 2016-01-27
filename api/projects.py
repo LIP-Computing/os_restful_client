@@ -27,7 +27,7 @@ class Controller(object):
            # print "Error OS variables"
            # raise
             # fixme(jorgesece): manage properly
-            self.identity = {'OS_AUTH_URL':'127.0.0.23','OS_PORT': '5000', "OS_VERSION": 'v3','OS_TOKEN':'050aa25281574aa6be07e206a7c6ac9a'}
+            self.identity = {'OS_AUTH_URL':'127.0.0.23','OS_PORT': '5000', "OS_VERSION": 'v3','OS_TOKEN':'04ceb2a7271e4f1b9b68ea89037a1f47'}
         self.os_helper = OpenStackDriver(self.identity['OS_AUTH_URL'], self.identity['OS_PORT'], self.identity["OS_VERSION"],self.identity['OS_TOKEN'])
 
     def index(self, parameters=None):
@@ -41,16 +41,15 @@ class Controller(object):
 
     def create(self, parameters):
         """Create a network instance in the cloud
-        :param: req: request object
-        :param parameters: request parameters with the new network attributes
+        :param parameters: array of projects (containg their paramemters)
         """
         path = '/projects'
-        message = "PROJECT CREATED:"
+        created = []
         for param in parameters:
             result = self.os_helper.create(path, param) # todo(jorgesece): parse out, code...
-            message = "%s \n %s" %(message, result)
+            created.append(result)
 
-        return message
+        return created
 
     # def show(self,  id, parameters=None):
     #     """Get network details
@@ -62,14 +61,15 @@ class Controller(object):
     #     occi_network_resources = self._get_network_resources([resp])
     #     return occi_network_resources[0]
     #
-    # def delete(self, req, parameters): # todo(jorgesece): manage several deletion
-    #     """delete networks which satisfy the parameters
-    #     :param parameters:
-    #     """
-    #     attributes = self._filter_attributes(parameters)
-    #     network_id = self.os_helper.delete_network(req, attributes)
-    #
-    #     return []
+    def delete(self, parameters):
+        """delete networks which satisfy the parameters
+        :param parameters:
+        """
+        for param in parameters:
+            # fixme(jorgesece): try?
+            path = "/projects/%s" % param['id']
+            self.os_helper.delete(path)
+        return []
     #
     # def run_action(self, req, id, body, parameters = None):
     #     raise exception.NotFound()

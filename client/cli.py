@@ -60,14 +60,20 @@ def project_create(name, description):
 @click.option('--content_format', '-f',  default='json', help='Format file (json or yaml).')
 def project_create(file, content_format):
     """Creates new projects from a file."""
+    resulting_message = "CREATED PROJECTS:"
     project_controller = ProjectController()
     try:
         parameters = utils.parse_file(file, content_format)
     except Exception as e:
         raise exception.ClientException(400, e.message)
+    try:
+        result = project_controller.create(parameters=parameters)
+    except Exception as e:
+        raise exception.ClientException(400, e.message) #todo(jorgesece): check it
 
-    result = project_controller.create(parameters=parameters)
-    click.echo(result)
+    for item in result:
+        resulting_message = '%s \n %s' % (resulting_message, item)
+    click.echo(resulting_message)
 
 
 @openstackcli.group()

@@ -35,7 +35,7 @@ class OpenStackDriver(object):
 
     @staticmethod
     def get_from_response(response, default):
-        if response.status_int in [200, 201, 202]:
+        if response.status_int in [200, 201, 202, 204]:
             exception.logger.debug('HTTP response: %s', response.status_int)
             return response.json_body #.get(element, default)
         else:
@@ -100,15 +100,12 @@ class OpenStackDriver(object):
         body = parsers.make_body(resource, parameters)
         return self._get_req(path, content_type="application/json", body=json.dumps(body), method="POST")
 
-    def _make_delete_request(self, req, path, parameters):
+    def _make_delete_request(self, path):
         """Create DELETE request
         This method create a DELETE Request instance
         :param req: the incoming request
         :param path: element location
         """
-        param = parsers.translate_parameters(self.translation["network"], parameters)
-        id = param["network_id"]
-        path = "%s/%s" % (path, id)
         return self._get_req(path, method="DELETE")
 
     def index(self, path, parameters=None):
@@ -133,7 +130,15 @@ class OpenStackDriver(object):
         json_response = self.get_from_response(response, {})
 
         return json_response
-    #
+
+    def delete(self, path):
+        """Delete network. It returns empty array
+        :param path:
+        """
+        req = self._make_delete_request(path)
+        response = req.get_response(None)
+        return response
+
     # def get_network(self, req, id):
     #     """Get info from a network. It returns json code from the server
     #     :param req: the incoming network
@@ -181,15 +186,7 @@ class OpenStackDriver(object):
     #
     #     return json_response
     #
-    # def delete_network(self, req, parameters):
-    #     """Delete network. It returns empty array
-    #     :param req: the incoming network
-    #     :param parameters:
-    #     """
-    #     path = "/networks"
-    #     req = self._make_delete_request(req, path, parameters)
-    #     response = req.get_response(self.app)
-    #     return response
+
     #
     # def run_action(self, req, action, id):
     #     """Run an action on a network.

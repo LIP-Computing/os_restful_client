@@ -35,3 +35,9 @@ class TestCaseAPIController(testtools.TestCase):
     def test_create(self, m_create):
         result = self.controller.create(None)
         self.assertIsNotNone(result)
+
+    @mock.patch.object(OpenStackDriver, "delete")
+    def test_create(self, m_create):
+        parameters =[{'id':'78934'}]
+        result = self.controller.delete(parameters)
+        self.assertIsNotNone(result)

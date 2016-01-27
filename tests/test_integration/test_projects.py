@@ -22,20 +22,79 @@
 # from occinet.api import network
 # from occinet.infrastructure import network_extend
 #
-
 import testtools
-from api.projects import Controller
+from client import cli
 
-class TestCaseAPIController(testtools.TestCase):
+from api.projects import Controller
+from credentials.session import KeySession
+import tests
+
+class TestIntegrationProjectCommand(tests.TestCaseCommandLine):
 
     def setUp(self):
-        super(TestCaseAPIController, self).setUp()
+        super(TestIntegrationProjectCommand, self).setUp()
+        # project_id = "484d3a7eeb4f4462b329c1d0463cf324"
+        # app = KeySession().create_keystone("admin", "stack1", project_id)
+        # token = app.auth_token # fixme(jorgesece): check what to do with auth ¿password or token?
+
+    # def test_project_delete_create(self, m_create):
+    #     result = self.runner.invoke(cli.project, ['create','name1'])
+    #     self.assertEqual(result.exit_code,0)
+    #     self.assertIsNone(result.exception)
+    #
+    # def test_project_create_bunch_yaml_ok(self, m_create):
+    #     result = self.runner.invoke(cli.project, ['createBunch','yaml_file_example.yml','--content_format=yaml'])
+    #     self.assertEqual(result.exit_code,0)
+    #     self.assertIsNone(result.exception)
+    #
+    #
+    # def test_project_create_bunch_json_ok(self, m_create):
+    #     result = self.runner.invoke(cli.project, ['createBunch','json_file_example.json','--content_format=json'])
+    #     self.assertEqual(result.exit_code,0)
+    #    self.assertIsNone(result.exception)
+
+class TestIntegrationProjectController(testtools.TestCase):
+
+    def setUp(self):
+        super(TestIntegrationProjectController, self).setUp()
         self.controller = Controller()
 
-    def test_index(self, m_index):
+    def test_index(self):
         result = self.controller.index()
         self.assertIsNotNone(result)
 
+    def test_create_delete(self):
+        list1 = self.controller.index()
+        parameter = [{'name':'project_test4', 'description':' integration project test'}]
+        result = self.controller.create(parameter)
+        self.assertIsNotNone(result)
+        self.assertIsInstance(result, list)
+        self.assertEqual(result.__len__(), parameter.__len__())
+        list2 = self.controller.index()
+        self.assertEqual(list1['projects'].__len__() + parameter.__len__(), list2['projects'].__len__())
+        #delete
+        self.controller.delete([{'id':result[0]['project']['id']}])
+        list3 = self.controller.index()
+        self.assertEqual(list1['projects'].__len__(), list3['projects'].__len__())
+
+    def test_bunch_create_delete(self):
+        list1 = self.controller.index()
+        parameter = [{'name':'project_test111', 'description':' integration project test 1'},
+                     {'name':'project_test222', 'description':' integration project test 2'}
+                     ]
+        result = self.controller.create(parameter)
+        self.assertIsNotNone(result)
+        self.assertIsInstance(result, list)
+        self.assertEqual(result.__len__(), parameter.__len__())
+        list2 = self.controller.index()
+        self.assertEqual(list1['projects'].__len__() + parameter.__len__(), list2['projects'].__len__())
+        #delete
+        param_delete = []
+        for item in result:
+            param_delete.append({'id':item['project']['id']})
+        self.controller.delete(param_delete)
+        list3 = self.controller.index()
+        self.assertEqual(list1['projects'].__len__(), list3['projects'].__len__())
 
 # class TestIntegrationNetwork(base.TestController):
 #

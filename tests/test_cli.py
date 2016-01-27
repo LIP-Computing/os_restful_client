@@ -21,20 +21,16 @@ from credentials.session import KeySession
 import tests
 
 
-class TestCommandProject(tests.TestCaseCommandLine):# todo(jorgesece): create as mock
+class TestCommandProject(tests.TestCaseCommandLine):
 
     def setUp(self):
         super(TestCommandProject, self).setUp()
-        # project_id = "484d3a7eeb4f4462b329c1d0463cf324"
-        # app = KeySession().create_keystone("admin", "stack1", project_id)
-        # token = app.auth_token # fixme(jorgesece): check what to do with auth ¿password or token?
 
     def test_no_exist(self):
         result = self.runner.invoke(cli.project, ['Noexist'])
         self.assertEqual(result.exit_code,2)
         self.assertIsNotNone(result.exception)
 
-    #@mock.patch.object(api.projects,"create") todo(jorgesece): follow this way to make mock
     def test_project(self):
         result = self.runner.invoke(cli.project)
         self.assertEqual(result.exit_code,0)
