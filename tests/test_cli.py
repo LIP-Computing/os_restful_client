@@ -93,6 +93,26 @@ class TestCommandProject(tests.TestCaseCommandLine):
         self.assertEqual(result.exit_code,0)
         self.assertIsNone(result.exception)
 
+    @mock.patch.object(projects.Controller, "delete")
+    def test_project_delete(self, m_delete):
+        result = self.runner.invoke(cli.project, ['delete','--id=89434'])
+        self.assertEqual(result.exit_code,0)
+        self.assertIsNone(result.exception)
+
+    @mock.patch.object(projects.Controller, "delete")
+    def test_project_delete_bunch(self, m_delete):
+        result = self.runner.invoke(cli.project, ['delete','--file=json_file_example.json', '--content_format=json'])
+        self.assertEqual(result.exit_code,0)
+        self.assertIsNone(result.exception)
+
+    @mock.patch.object(projects.Controller, "delete")
+    def test_project_delete_bunch(self, m_delete):
+        result = self.runner.invoke(cli.project, ['delete'])
+        self.assertEqual(result.exit_code,-1)
+        self.assertIsNotNone(result.exception)
+        self.assertEqual(result.exception.code, 404)
+
+
 class TestCommandUser(tests.TestCaseCommandLine):# todo(create as mock)
 
     def setUp(self):

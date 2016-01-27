@@ -55,6 +55,27 @@ def project_create(name, description):
     click.echo(result)
 
 
+@project.command('delete')
+@click.option('--id', '-i', default=None, help='Identification of project')
+@click.option('--file', '-f', default=None, help='File with list of projects ids')
+@click.option('--content_format', '-cf',  default='json', help='Format file (json or yaml).')
+def project_delete(id, file, content_format):
+    """Delelete."""
+    project_controller = ProjectController()
+    if file:
+        project_controller = ProjectController()
+        try:
+            parameters = utils.parse_file(file, content_format) #fixme(jorgesece): check if file contains id
+        except Exception as e:
+            raise exception.ClientException(400, e.message)
+    else:
+        if id:
+            parameters = [{'id': id}]
+        else:
+            raise exception.ClientException(404, "You should indicate an id or a list of them")
+    result = project_controller.delete(parameters=[parameters])
+    click.echo(result)
+
 @project.command('createBunch')
 @click.argument('file')
 @click.option('--content_format', '-f',  default='json', help='Format file (json or yaml).')
