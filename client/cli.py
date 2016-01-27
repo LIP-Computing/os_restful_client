@@ -48,23 +48,23 @@ def project_list():
 def project_create(name, description):
     """Creates a new project."""
     project_controller = ProjectController()
-    parameters = {'name':name}
+    parameters = {'name': name}
     if description:
         parameters['description'] = description
-    result = project_controller.create(parameters=parameters)
+    result = project_controller.create(parameters=[parameters])
     click.echo(result)
 
 
 @project.command('createBunch')
 @click.argument('file')
-@click.option('--format', '-f',  default='json', help='Format file (json or yaml).')
-def project_create(file):
+@click.option('--content_format', '-f',  default='json', help='Format file (json or yaml).')
+def project_create(file, content_format):
     """Creates new projects from a file."""
     project_controller = ProjectController()
     try:
-        parameters = utils.parse_file(file, format)
+        parameters = utils.parse_file(file, content_format)
     except Exception as e:
-        raise exception.ClientException(e)
+        raise exception.ClientException(400, e.message)
 
     result = project_controller.create(parameters=parameters)
     click.echo(result)

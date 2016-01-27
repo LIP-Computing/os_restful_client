@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 # Copyright 2015 LIP - Lisbon
 #
 # Licensed under the Apache License, Version 2.0 (the "License"); you may
@@ -23,6 +22,21 @@
 # from occinet.api import network
 # from occinet.infrastructure import network_extend
 #
+
+import testtools
+from api.projects import Controller
+
+class TestCaseAPIController(testtools.TestCase):
+
+    def setUp(self):
+        super(TestCaseAPIController, self).setUp()
+        self.controller = Controller()
+
+    def test_index(self, m_index):
+        result = self.controller.index()
+        self.assertIsNotNone(result)
+
+
 # class TestIntegrationNetwork(base.TestController):
 #
 #     def setUp(self):

@@ -39,6 +39,19 @@ class Controller(object):
 
         return r
 
+    def create(self, parameters):
+        """Create a network instance in the cloud
+        :param: req: request object
+        :param parameters: request parameters with the new network attributes
+        """
+        path = '/projects'
+        message = "PROJECT CREATED:"
+        for param in parameters:
+            result = self.os_helper.create(path, param) # todo(jorgesece): parse out, code...
+            message = "%s \n %s" %(message, result)
+
+        return message
+
     # def show(self,  id, parameters=None):
     #     """Get network details
     #     :param req: request object
@@ -49,16 +62,6 @@ class Controller(object):
     #     occi_network_resources = self._get_network_resources([resp])
     #     return occi_network_resources[0]
     #
-    def create(self, parameters):# todo(jorgesece): manage several creation
-        """Create a network instance in the cloud
-        :param: req: request object
-        :param parameters: request parameters with the new network attributes
-        """
-        path = '/projects'
-        net = self.os_helper.create(path, parameters)
-
-        return net
-
     # def delete(self, req, parameters): # todo(jorgesece): manage several deletion
     #     """delete networks which satisfy the parameters
     #     :param parameters:

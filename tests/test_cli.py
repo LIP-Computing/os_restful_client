@@ -52,21 +52,50 @@ class TestCommandProject(tests.TestCaseCommandLine):# todo(jorgesece): create as
         self.assertEqual(result.exit_code,0)
         self.assertIsNone(result.exception)
 
-    def test_project_create_error_arg(self):
+    @mock.patch.object(projects.Controller, "create")
+    def test_project_create_error_arg(self, m_create):
         result = self.runner.invoke(cli.project, ['create','name1','erroArg'])
         self.assertEqual(result.exit_code,2)
         self.assertIsNotNone(result.exception)
 
-    def test_project_create_optional_arg(self):
+    @mock.patch.object(projects.Controller, "create")
+    def test_project_create_optional_arg(self, m_create):
         result = self.runner.invoke(cli.project, ['create','name','--description=description'])
         self.assertEqual(result.exit_code,0)
         self.assertIsNone(result.exception)
 
-    def test_project_create_bunch(self):
-        result = self.runner.invoke(cli.project, ['createBunch','file'])
+    @mock.patch.object(projects.Controller, "create")
+    def test_project_create_bunch_error_file(self, m_create):
+        result = self.runner.invoke(cli.project, ['createBunch','file_does_not_exist'])
+        self.assertEqual(result.exit_code,-1)
+        self.assertIsNotNone(result.exception)
+        self.assertEqual(result.exception.code, 400)
+
+    @mock.patch.object(projects.Controller, "create")
+    def test_project_create_bunch_wrong_format(self, m_create):
+        result = self.runner.invoke(cli.project, ['createBunch','yaml_file_example.yml','--content_format=format_err'])
+        self.assertEqual(result.exit_code,-1)
+        self.assertIsNotNone(result.exception)
+        self.assertEqual(result.exception.code, 400)
+
+    @mock.patch.object(projects.Controller, "create")
+    def test_project_create_bunch_truncate_format(self, m_create):
+        result = self.runner.invoke(cli.project, ['createBunch','yaml_file_example.yml','--content_format=json'])
+        self.assertEqual(result.exit_code,-1)
+        self.assertIsNotNone(result.exception)
+        self.assertEqual(result.exception.code, 400)
+
+    @mock.patch.object(projects.Controller, "create")
+    def test_project_create_bunch_yaml_ok(self, m_create):
+        result = self.runner.invoke(cli.project, ['createBunch','yaml_file_example.yml','--content_format=yaml'])
         self.assertEqual(result.exit_code,0)
         self.assertIsNone(result.exception)
 
+    @mock.patch.object(projects.Controller, "create")
+    def test_project_create_bunch_json_ok(self, m_create):
+        result = self.runner.invoke(cli.project, ['createBunch','json_file_example.json','--content_format=json'])
+        self.assertEqual(result.exit_code,0)
+        self.assertIsNone(result.exception)
 
 class TestCommandUser(tests.TestCaseCommandLine):# todo(create as mock)
 
