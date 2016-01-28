@@ -63,8 +63,8 @@ def exception_from_response(response):
 
 
 class ParseException(Exception):
-    def __init__(self, code, value):
-        self.message = value
+    def __init__(self, code, message):
+        self.message = message
         self.code = code
 
     def __str__(self):
@@ -73,8 +73,8 @@ class ParseException(Exception):
 
 class ClientException(Exception):
 
-    def __init__(self, code, value):
-        self.message = value
+    def __init__(self, code, message):
+        self.message = message
         self.code = code
 
     def __str__(self):

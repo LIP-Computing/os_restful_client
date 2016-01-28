@@ -65,6 +65,7 @@ def project_create(attributes, file, content_format):
             resulting_message = '%s%s\n' % (resulting_message, item)
         resulting_message = '%s]' % resulting_message
     except Exception as e:
+    #    raise e
         raise exception.ClientException(e.code, e.message) #todo(jorgesece): check it
     click.echo(resulting_message)
 
