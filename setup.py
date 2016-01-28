@@ -21,7 +21,7 @@ setup(
     install_requires=dependencies,
     entry_points={
         'console_scripts': [
-            'os-restful-client = client.cli:main',
+            'os-restful-client = client.cli',
         ],
     },
     classifiers=[
