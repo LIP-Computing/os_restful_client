@@ -19,6 +19,8 @@ import six.moves.urllib.parse as urlparse
 import json
 import yaml
 
+from driver.exception import ParseException
+
 
 def utf8(value):
     """Try to turn a string into utf-8 if possible.
@@ -63,12 +65,23 @@ def parse_file(fp, content_format):
     #     fp = open(file, 'r')
     # except:
     #     raise Exception("File not found or corrupt")
-    if content_format == 'json':
-        str = json.load(fp)
-    elif content_format == 'yaml':
-        str = yaml.load(fp)
-    else:
-#        fp.close()
-        raise Exception("Invalid format")
-#    fp.close()
+    try:
+        if content_format == 'json':
+            str = json.load(fp)
+        elif content_format == 'yaml':
+            str = yaml.load(fp)
+        else:
+    #        fp.close()
+            raise Exception("Invalid format")
+    except Exception as e:
+        raise ParseException(400, "Invalid format")
     return str
+
+#'--attributes={name=name1,definition="una definition"'
+def parse_attributes(str):
+    try:
+        out = json.loads(str.replace("{", "{\"").replace("}", "}").replace(":", "\":").replace(",", ",\""))
+    except Exception as e:
+        raise ParseException(code=400,message="Invalid format")
+    return [out]
+

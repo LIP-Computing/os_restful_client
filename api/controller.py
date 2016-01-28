@@ -17,7 +17,7 @@
 
 import api
 from driver.openstack import OpenStackDriver
-
+from driver.exception import ParseException
 
 class Controller(object):
     resource = None
@@ -27,10 +27,11 @@ class Controller(object):
         if api.check_identity_variables():
             self.identity = api.get_identity_variables()
         else:
-           # print "Error OS variables"
-           # raise
-            # fixme(jorgesece): manage properly
-            self.identity = {'OS_AUTH_URL':'127.0.0.23','OS_PORT': '5000', "OS_VERSION": 'v3','OS_TOKEN':'cb6ec577f8a340f7bf49812aada2cfde'}
+            raise ParseException(401
+                                 , 'Environmet variables are need: OS_AUTH_URL=127.0.0.23,'
+                                   ' OS_PORT=5000, OS_VERSION=v3, OS_TOKEN=948473890234890')
+
+            #self.identity = {'OS_AUTH_URL':'127.0.0.23','OS_PORT': '5000', "OS_VERSION": 'v3','OS_TOKEN':'cb6ec577f8a340f7bf49812aada2cfde'}
         self.os_helper = OpenStackDriver(self.identity['OS_AUTH_URL'], self.identity['OS_PORT'], self.identity["OS_VERSION"],self.identity['OS_TOKEN'])
 
     def index(self, parameters=None):

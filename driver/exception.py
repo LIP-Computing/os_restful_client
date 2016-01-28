@@ -62,11 +62,20 @@ def exception_from_response(response):
     return exc(message=title)
 
 
-class ClientException(Exception):
-
+class ParseException(Exception):
     def __init__(self, code, value):
-        self.value = value
+        self.message = value
         self.code = code
 
     def __str__(self):
-        return repr(self.value)
+        return repr(self.message)
+
+
+class ClientException(Exception):
+
+    def __init__(self, code, value):
+        self.message = value
+        self.code = code
+
+    def __str__(self):
+        return repr(self.message)

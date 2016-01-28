@@ -3,7 +3,7 @@ Python openstack client which interacts with the OS restful api directly
 """
 from setuptools import find_packages, setup
 
-dependencies = ['click','testtools']
+dependencies = ['click','testtools', 'mock']
 
 setup(
     name='os-restful-client',

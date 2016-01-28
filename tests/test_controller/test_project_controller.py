@@ -14,7 +14,8 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 import testtools
-import mock # todo(jorgesece): add to de testing requirements.
+import mock
+import os
 
 from driver.openstack import OpenStackDriver
 from api.controller import Controller
@@ -24,6 +25,10 @@ class TestCaseAPIController(testtools.TestCase):
 
     def setUp(self):
         super(TestCaseAPIController, self).setUp()
+        os.environ.data['OS_AUTH_URL'] = '127.0.0.23'
+        os.environ.data['OS_PORT'] = '5000'
+        os.environ.data['OS_VERSION'] = 'v3'
+        os.environ.data['OS_TOKEN'] = 'token'
         self.controller = Controller(mock.MagicMock())
 
     @mock.patch.object(OpenStackDriver, "index")

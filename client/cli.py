@@ -42,41 +42,41 @@ def project_list():
     click.echo('NOT IMPLEMENTED. Created list')
 
 
-@project.command('create')
-@click.option('--name', '-n', help='Name project of the project.')# fixme(jorgesece): create justa a attr with all attrs.
-@click.option('--description', '-d', help='Description of the project.')
+@project.command('create', help="Select either --attributes or --file input")
+@click.option('--attributes', '-a', default=None#,callback=utils.validate_attributes)
+              , help='Name project of the project: {name:"name_project", description:"description project",...}')#,callback=utils.validate_attributes)
 @click.option('--file', '-f', default=None, help='File with list of projects attributes', type=click.File('r'))
-@click.option('--content_format', '-cf',  default='json', help='Format file (json or yaml).')
-def project_create(name, description, file, content_format):
+@click.option('--content_format', '-cf',  default='json'
+              , help='Format file.'
+              , type=click.Choice(['json', 'yaml']))
+def project_create(attributes, file, content_format):
     """Creates a new project."""
     project_controller = Controller('projects')
-    if file:
-        resulting_message = "CREATED PROJECTS:\n ["
-        try:
+    resulting_message = "CREATED PROJECTS:\n ["
+    try:
+        if file:
             parameters = utils.parse_file(file, content_format)
-        except Exception as e:
-            raise exception.ClientException(400, e.message)
-        try:
-            result = project_controller.create(parameters=parameters)
-        except Exception as e:
-            raise exception.ClientException(e.code, e.message) #todo(jorgesece): check it
+        elif attributes:
+            parameters = utils.parse_attributes(attributes)
+        else:
+            raise exception.ClientException(400, 'You need to specify either --attributes or --file')
+        result = project_controller.create(parameters=parameters)
         for item in result:
             resulting_message = '%s%s\n' % (resulting_message, item)
         resulting_message = '%s]' % resulting_message
-    else:
-        parameters = {'name': name}
-        if description:
-            parameters['description'] = description
-        resulting_message = project_controller.create(parameters=[parameters])
+    except Exception as e:
+        raise exception.ClientException(e.code, e.message) #todo(jorgesece): check it
     click.echo(resulting_message)
 
 
-@project.command('delete')
+@project.command('delete',help="Select either --id or --file input")
 @click.option('--id', '-i', default=None, help='Identification of project')
 @click.option('--file', '-f', default=None,
               help='File with list of projects ids. [{"id"="xx"},{"id"="xx2"}..]',
               type=click.File('r'))
-@click.option('--content_format', '-cf',  default='json', help='Format file (json or yaml).')
+@click.option('--content_format', '-cf',  default='json'
+              , help='Format file.'
+              , type=click.Choice(['json', 'yaml']))
 def project_delete(id, file, content_format):
     """Delelete."""
     project_controller = Controller('projects')

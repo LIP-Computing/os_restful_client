@@ -45,7 +45,7 @@ class TestIntegrationProjectCommand(tests.TestCaseCommandLine):
         self.assertIsNone(result.exception)
 
     def test_project_create_delete(self):
-        result = self.runner.invoke(cli.project, ['create','--name=name1'])
+        result = self.runner.invoke(cli.project, ['create','--attributes={name:"name1"}'])
         #json.loads(result.output_bytes.replace ("u\'", "\"").replace ("\'", "\"").replace("True","\"True\"").replace("None","\"None\""))[0]['project']['id']
         self.assertEqual(result.exit_code,0)
         self.assertIsNone(result.exception)
