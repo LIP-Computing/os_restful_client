@@ -113,3 +113,7 @@ def user_create(name,description):
 def user_create(file):
     """Creates a new ship."""
     click.echo('NOT IMPLEMENTED. Created user from a JSON file %s' % file)
+
+
+if __name__ == '__main__':
+    openstackcli()
