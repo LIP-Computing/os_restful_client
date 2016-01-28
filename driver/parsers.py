@@ -51,6 +51,7 @@ def json_load_from_client(string_os):
                       .replace("True","\"True\"")
                       .replace("None","\"None\"")
                       .replace("CREATED PROJECTS:\n", "")
-                      .replace("\n", ",")
+                      .replace("}\n{", "},{")
+                      .replace("\n", "")
                       )
 

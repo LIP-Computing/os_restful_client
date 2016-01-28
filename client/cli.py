@@ -93,8 +93,8 @@ def project_create(file, content_format):
         raise exception.ClientException(e.code, e.message) #todo(jorgesece): check it
 
     for item in result:
-        resulting_message = '%s %s \n' % (resulting_message, item)
-    resulting_message = '%s \n ]' % resulting_message
+        resulting_message = '%s%s\n' % (resulting_message, item)
+    resulting_message = '%s]' % resulting_message
     click.echo(resulting_message)
 
 
