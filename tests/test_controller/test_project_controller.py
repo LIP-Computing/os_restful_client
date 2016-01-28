@@ -17,7 +17,7 @@ import testtools
 import mock # todo(jorgesece): add to de testing requirements.
 
 from driver.openstack import OpenStackDriver
-from api.projects import Controller
+from api.controller import Controller
 
 
 class TestCaseAPIController(testtools.TestCase):

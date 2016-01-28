@@ -19,7 +19,7 @@ import click
 from driver import utils
 from driver import exception
 
-from api.projects import Controller as ProjectController
+from api.controller import Controller
 
 
 @click.group()
@@ -36,7 +36,7 @@ def project():
 
 @project.command('list')
 def project_list():
-    project_controller = ProjectController()
+    project_controller = Controller('project')
     result = project_controller.index() # todo(jorgesece): parse result to json
     click.echo(result)
     click.echo('NOT IMPLEMENTED. Created list')
@@ -47,7 +47,7 @@ def project_list():
 @click.option('--description', '-d', help='Description of the project.')
 def project_create(name, description):
     """Creates a new project."""
-    project_controller = ProjectController()
+    project_controller = Controller('project')
     parameters = {'name': name}
     if description:
         parameters['description'] = description
@@ -61,9 +61,9 @@ def project_create(name, description):
 @click.option('--content_format', '-cf',  default='json', help='Format file (json or yaml).')
 def project_delete(id, file, content_format):
     """Delelete."""
-    project_controller = ProjectController()
+    project_controller = Controller('project')
     if file:
-        project_controller = ProjectController()
+        project_controller = Controller('project')
         try:
             parameters = utils.parse_file(file, content_format) #fixme(jorgesece): check if file contains id
         except Exception as e:
@@ -82,7 +82,7 @@ def project_delete(id, file, content_format):
 def project_create(file, content_format):
     """Creates new projects from a file."""
     resulting_message = "CREATED PROJECTS:"
-    project_controller = ProjectController()
+    project_controller = Controller('project')
     try:
         parameters = utils.parse_file(file, content_format)
     except Exception as e:

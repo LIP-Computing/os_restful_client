@@ -20,21 +20,24 @@ from driver.openstack import OpenStackDriver
 
 
 class Controller(object):
-    def __init__(self, *args, **kwargs):
+    resource = None
+
+    def __init__(self, resource):
+        self.resource = resource
         if api.check_identity_variables():
             self.identity = api.get_identity_variables()
         else:
            # print "Error OS variables"
            # raise
             # fixme(jorgesece): manage properly
-            self.identity = {'OS_AUTH_URL':'127.0.0.23','OS_PORT': '5000', "OS_VERSION": 'v3','OS_TOKEN':'04ceb2a7271e4f1b9b68ea89037a1f47'}
+            self.identity = {'OS_AUTH_URL':'127.0.0.23','OS_PORT': '5000', "OS_VERSION": 'v3','OS_TOKEN':'cb6ec577f8a340f7bf49812aada2cfde'}
         self.os_helper = OpenStackDriver(self.identity['OS_AUTH_URL'], self.identity['OS_PORT'], self.identity["OS_VERSION"],self.identity['OS_TOKEN'])
 
     def index(self, parameters=None):
         """List networks filtered by parameters
         :param parameters: request parameters
         """
-        path = '/projects'
+        path = '/%s' % self.resource
         r = self.os_helper.index(path, parameters) # todo(jorgesece): parse out, code...
 
         return r
@@ -43,7 +46,7 @@ class Controller(object):
         """Create a network instance in the cloud
         :param parameters: array of projects (containg their paramemters)
         """
-        path = '/projects'
+        path = '/%s' % self.resource
         created = []
         for param in parameters:
             result = self.os_helper.create(path, param) # todo(jorgesece): parse out, code...
@@ -67,7 +70,7 @@ class Controller(object):
         """
         for param in parameters:
             # fixme(jorgesece): try?
-            path = "/projects/%s" % param['id']
+            path = "/%s/%s" % (self.resource, param['id'])
             self.os_helper.delete(path)
         return []
     #

@@ -15,7 +15,7 @@
 # under the License.
 import mock
 from client import cli
-from api import projects
+from api import controller
 from credentials.session import KeySession
 
 import tests
@@ -36,76 +36,76 @@ class TestCommandProject(tests.TestCaseCommandLine):
         self.assertEqual(result.exit_code,0)
         self.assertIsNone(result.exception)
 
-    @mock.patch.object(projects.Controller, "index")
+    @mock.patch.object(controller.Controller, "index")
     def test_project_list(self, m_index):
         result = self.runner.invoke(cli.project, ['list'])
         self.assertEqual(result.exit_code,0)
         self.assertIsNone(result.exception)
 
-    @mock.patch.object(projects.Controller, "create")
+    @mock.patch.object(controller.Controller, "create")
     def test_project_create(self, m_create):
         result = self.runner.invoke(cli.project, ['create','name1'])
         self.assertEqual(result.exit_code,0)
         self.assertIsNone(result.exception)
 
-    @mock.patch.object(projects.Controller, "create")
+    @mock.patch.object(controller.Controller, "create")
     def test_project_create_error_arg(self, m_create):
         result = self.runner.invoke(cli.project, ['create','name1','erroArg'])
         self.assertEqual(result.exit_code,2)
         self.assertIsNotNone(result.exception)
 
-    @mock.patch.object(projects.Controller, "create")
+    @mock.patch.object(controller.Controller, "create")
     def test_project_create_optional_arg(self, m_create):
         result = self.runner.invoke(cli.project, ['create','name','--description=description'])
         self.assertEqual(result.exit_code,0)
         self.assertIsNone(result.exception)
 
-    @mock.patch.object(projects.Controller, "create")
+    @mock.patch.object(controller.Controller, "create")
     def test_project_create_bunch_error_file(self, m_create):
         result = self.runner.invoke(cli.project, ['createBunch','file_does_not_exist'])
         self.assertEqual(result.exit_code,-1)
         self.assertIsNotNone(result.exception)
         self.assertEqual(result.exception.code, 400)
 
-    @mock.patch.object(projects.Controller, "create")
+    @mock.patch.object(controller.Controller, "create")
     def test_project_create_bunch_wrong_format(self, m_create):
         result = self.runner.invoke(cli.project, ['createBunch','yaml_file_example.yml','--content_format=format_err'])
         self.assertEqual(result.exit_code,-1)
         self.assertIsNotNone(result.exception)
         self.assertEqual(result.exception.code, 400)
 
-    @mock.patch.object(projects.Controller, "create")
+    @mock.patch.object(controller.Controller, "create")
     def test_project_create_bunch_truncate_format(self, m_create):
         result = self.runner.invoke(cli.project, ['createBunch','yaml_file_example.yml','--content_format=json'])
         self.assertEqual(result.exit_code,-1)
         self.assertIsNotNone(result.exception)
         self.assertEqual(result.exception.code, 400)
 
-    @mock.patch.object(projects.Controller, "create")
+    @mock.patch.object(controller.Controller, "create")
     def test_project_create_bunch_yaml_ok(self, m_create):
         result = self.runner.invoke(cli.project, ['createBunch','yaml_file_example.yml','--content_format=yaml'])
         self.assertEqual(result.exit_code,0)
         self.assertIsNone(result.exception)
 
-    @mock.patch.object(projects.Controller, "create")
+    @mock.patch.object(controller.Controller, "create")
     def test_project_create_bunch_json_ok(self, m_create):
         result = self.runner.invoke(cli.project, ['createBunch','json_file_example.json','--content_format=json'])
         self.assertEqual(result.exit_code,0)
         self.assertIsNone(result.exception)
 
-    @mock.patch.object(projects.Controller, "delete")
+    @mock.patch.object(controller.Controller, "delete")
     def test_project_delete(self, m_delete):
         result = self.runner.invoke(cli.project, ['delete','--id=89434'])
         self.assertEqual(result.exit_code,0)
         self.assertIsNone(result.exception)
 
-    @mock.patch.object(projects.Controller, "delete")
+    @mock.patch.object(controller.Controller, "delete")
     def test_project_delete_bunch(self, m_delete):
         result = self.runner.invoke(cli.project, ['delete','--file=json_file_example.json', '--content_format=json'])
         self.assertEqual(result.exit_code,0)
         self.assertIsNone(result.exception)
 
-    @mock.patch.object(projects.Controller, "delete")
+    @mock.patch.object(controller.Controller, "delete")
     def test_project_delete_bunch(self, m_delete):
         result = self.runner.invoke(cli.project, ['delete'])
         self.assertEqual(result.exit_code,-1)

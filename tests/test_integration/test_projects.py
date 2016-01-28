@@ -25,7 +25,7 @@
 import testtools
 from client import cli
 
-from api.projects import Controller
+from api.controller import Controller
 from credentials.session import KeySession
 import tests
 
@@ -33,9 +33,9 @@ class TestIntegrationProjectCommand(tests.TestCaseCommandLine):
 
     def setUp(self):
         super(TestIntegrationProjectCommand, self).setUp()
-        # project_id = "484d3a7eeb4f4462b329c1d0463cf324"
-        # app = KeySession().create_keystone("admin", "stack1", project_id)
-        # token = app.auth_token # fixme(jorgesece): check what to do with auth ¿password or token?
+        project_id = "484d3a7eeb4f4462b329c1d0463cf324"
+        app = KeySession().create_keystone("admin", "stack1", project_id)
+        token = app.auth_token # fixme(jorgesece): check what to do with auth ¿password or token?
 
     # def test_project_delete_create(self, m_create):
     #     result = self.runner.invoke(cli.project, ['create','name1'])
@@ -57,7 +57,7 @@ class TestIntegrationProjectController(testtools.TestCase):
 
     def setUp(self):
         super(TestIntegrationProjectController, self).setUp()
-        self.controller = Controller()
+        self.controller = Controller('projects')
 
     def test_index(self):
         result = self.controller.index()
