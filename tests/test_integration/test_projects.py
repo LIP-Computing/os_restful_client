@@ -12,36 +12,71 @@
 # WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 # License for the specific language governing permissions and limitations
 # under the License.
-
-
-# from credentials.session import KeySession
-#
-# from ooi.tests import base
-# from ooi import exception
-#
-# from occinet.api import network
-# from occinet.infrastructure import network_extend
 #
 import testtools
-from client import cli
+import os
 
+from client import cli
 from api.controller import Controller
 from credentials.session import KeySession
 import tests
+from driver import parsers
+
+
+def configure_env():
+    project_id = "484d3a7eeb4f4462b329c1d0463cf324"
+    app = KeySession().create_keystone("admin", "stack1", project_id)
+    token = app.auth_token # fixme(jorgesece): check what to do with auth ¿password or token?
+    os.environ.data['OS_AUTH_URL'] = '127.0.0.23'
+    os.environ.data['OS_PORT'] = '5000'
+    os.environ.data['OS_VERSION'] = 'v3'
+    os.environ.data['OS_TOKEN'] = token
+
 
 class TestIntegrationProjectCommand(tests.TestCaseCommandLine):
 
     def setUp(self):
         super(TestIntegrationProjectCommand, self).setUp()
-        project_id = "484d3a7eeb4f4462b329c1d0463cf324"
-        app = KeySession().create_keystone("admin", "stack1", project_id)
-        token = app.auth_token # fixme(jorgesece): check what to do with auth ¿password or token?
+        configure_env()
 
-    # def test_project_delete_create(self, m_create):
-    #     result = self.runner.invoke(cli.project, ['create','name1'])
-    #     self.assertEqual(result.exit_code,0)
-    #     self.assertIsNone(result.exception)
-    #
+    def test_project_list(self):
+        result = self.runner.invoke(cli.project, ['list'])
+        self.assertEqual(result.exit_code,0)
+        self.assertIsNone(result.exception)
+
+    def test_project_create_delete(self):
+        result = self.runner.invoke(cli.project, ['create','name3'])
+        #json.loads(result.output_bytes.replace ("u\'", "\"").replace ("\'", "\"").replace("True","\"True\"").replace("None","\"None\""))[0]['project']['id']
+        self.assertEqual(result.exit_code,0)
+        self.assertIsNone(result.exception)
+        #delete
+        result_dict = parsers.json_load_from_os_string(result.output_bytes)
+        # var = "[{u'project': {u'description': u'', u'links': {u'self': u'http://localhost/v3/projects/e2b42b2aa5d5444f833b94d973571b63'}, u'enabled': True, u'id': u'e2b42b2aa5d5444f833b94d973571b63', u'parent_id': None, u'domain_id': u'default', u'name': u'name3'}}]"
+        # result_dict = parsers.json_load_from_os_string(var)
+        for item in result_dict:
+            id = item['project']['id']
+            result_delete = self.runner.invoke(cli.project, ['delete','--id=%s' % id])
+            self.assertEqual(result_delete.exit_code,0)
+            self.assertIsNone(result_delete.exception)
+
+    def test_project_create_delete_bunch(self):
+        result = self.runner.invoke(cli.project, ['createBunch','../json_file_example.json'])
+        #json.loads(result.output_bytes.replace ("u\'", "\"").replace ("\'", "\"").replace("True","\"True\"").replace("None","\"None\""))[0]['project']['id']
+        self.assertEqual(result.exit_code,0)
+        self.assertIsNone(result.exception)
+        #delete
+        #
+        #var = "CREATED PROJECTS: \n {u'project': {u'description': u'description lip 1', u'links': {u'self': u'http://localhost/v3/projects/7bf753af62454620bb71aa939c4c4d04'}, u'enabled': True, u'id': u'7bf753af62454620bb71aa939c4c4d04', u'parent_id': None, u'domain_id': u'default', u'name': u'lipjson1'}} \n {u'project': {u'description': u'description lip 1', u'links': {u'self': u'http://localhost/v3/projects/f86ae5fdc3fb427ca31c493282ae1dc8'}, u'enabled': True, u'id': u'f86ae5fdc3fb427ca31c493282ae1dc8', u'parent_id': None, u'domain_id': u'default', u'name': u'lipjson2'}}"
+
+        result_dict = parsers.json_load_from_client(result.output_bytes)
+        # var = "[{u'project': {u'description': u'', u'links': {u'self': u'http://localhost/v3/projects/e2b42b2aa5d5444f833b94d973571b63'}, u'enabled': True, u'id': u'e2b42b2aa5d5444f833b94d973571b63', u'parent_id': None, u'domain_id': u'default', u'name': u'name3'}}]"
+        # result_dict = parsers.json_load_from_os_string(var)
+        for item in result_dict:
+            id = item['project']['id']
+            result_delete = self.runner.invoke(cli.project, ['delete','--id=%s' % id])
+            self.assertEqual(result_delete.exit_code,0)
+            self.assertIsNone(result_delete.exception)
+
     # def test_project_create_bunch_yaml_ok(self, m_create):
     #     result = self.runner.invoke(cli.project, ['createBunch','yaml_file_example.yml','--content_format=yaml'])
     #     self.assertEqual(result.exit_code,0)
@@ -57,6 +92,7 @@ class TestIntegrationProjectController(testtools.TestCase):
 
     def setUp(self):
         super(TestIntegrationProjectController, self).setUp()
+        configure_env()
         self.controller = Controller('projects')
 
     def test_index(self):

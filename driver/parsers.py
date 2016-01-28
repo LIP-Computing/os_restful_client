@@ -14,7 +14,7 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 #
-
+import json
 
 def make_body(resource, parameters):
         body = {resource:{}}
@@ -44,4 +44,13 @@ def translate_parameters(translation, parameters):
             out[translation[key]] = parameters[key]
     return out
 
+
+def json_load_from_client(string_os):
+    return json.loads(string_os.replace ("u\'", "\"")
+                      .replace ("\'", "\"")
+                      .replace("True","\"True\"")
+                      .replace("None","\"None\"")
+                      .replace("CREATED PROJECTS:\n", "")
+                      .replace("\n", ",")
+                      )
 

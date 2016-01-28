@@ -36,7 +36,7 @@ def project():
 
 @project.command('list')
 def project_list():
-    project_controller = Controller('project')
+    project_controller = Controller('projects')
     result = project_controller.index() # todo(jorgesece): parse result to json
     click.echo(result)
     click.echo('NOT IMPLEMENTED. Created list')
@@ -47,7 +47,7 @@ def project_list():
 @click.option('--description', '-d', help='Description of the project.')
 def project_create(name, description):
     """Creates a new project."""
-    project_controller = Controller('project')
+    project_controller = Controller('projects')
     parameters = {'name': name}
     if description:
         parameters['description'] = description
@@ -61,9 +61,9 @@ def project_create(name, description):
 @click.option('--content_format', '-cf',  default='json', help='Format file (json or yaml).')
 def project_delete(id, file, content_format):
     """Delelete."""
-    project_controller = Controller('project')
+    project_controller = Controller('projects')
     if file:
-        project_controller = Controller('project')
+        project_controller = Controller('projects')
         try:
             parameters = utils.parse_file(file, content_format) #fixme(jorgesece): check if file contains id
         except Exception as e:
@@ -73,7 +73,7 @@ def project_delete(id, file, content_format):
             parameters = [{'id': id}]
         else:
             raise exception.ClientException(404, "You should indicate an id or a list of them")
-    result = project_controller.delete(parameters=[parameters])
+    result = project_controller.delete(parameters=parameters)
     click.echo(result)
 
 @project.command('createBunch')
@@ -81,8 +81,8 @@ def project_delete(id, file, content_format):
 @click.option('--content_format', '-f',  default='json', help='Format file (json or yaml).')
 def project_create(file, content_format):
     """Creates new projects from a file."""
-    resulting_message = "CREATED PROJECTS:"
-    project_controller = Controller('project')
+    resulting_message = "CREATED PROJECTS:\n ["
+    project_controller = Controller('projects')
     try:
         parameters = utils.parse_file(file, content_format)
     except Exception as e:
@@ -90,10 +90,11 @@ def project_create(file, content_format):
     try:
         result = project_controller.create(parameters=parameters)
     except Exception as e:
-        raise exception.ClientException(400, e.message) #todo(jorgesece): check it
+        raise exception.ClientException(e.code, e.message) #todo(jorgesece): check it
 
     for item in result:
-        resulting_message = '%s \n %s' % (resulting_message, item)
+        resulting_message = '%s %s \n' % (resulting_message, item)
+    resulting_message = '%s \n ]' % resulting_message
     click.echo(resulting_message)
 
 

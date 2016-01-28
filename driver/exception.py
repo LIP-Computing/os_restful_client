@@ -52,12 +52,14 @@ def exception_from_response(response):
     code = response.status_int
     try:
         message = response.json_body.popitem()[1].get("message")
+        title = response.json_body.popitem()[1].get("title")
     except Exception:
         code = 500
         message = "Unknown error happenened processing response %s" % response
-    logger.warning('Response exception. %s:%s', code,message)
+        title = message
+    logger.warning('Response exception. %s:%s', code, message)
     exc = exceptions.get(code, webob.exc.HTTPInternalServerError)
-    return exc(explanation=message)
+    return exc(message=title)
 
 
 class ClientException(Exception):
