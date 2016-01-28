@@ -43,21 +43,37 @@ def project_list():
 
 
 @project.command('create')
-@click.argument('name')
+@click.option('--name', '-n', help='Name project of the project.')# fixme(jorgesece): create justa a attr with all attrs.
 @click.option('--description', '-d', help='Description of the project.')
-def project_create(name, description):
+@click.option('--file', '-f', default=None, help='File with list of projects ids')
+@click.option('--content_format', '-cf',  default='json', help='Format file (json or yaml).')
+def project_create(name, description, file, content_format):
     """Creates a new project."""
     project_controller = Controller('projects')
-    parameters = {'name': name}
-    if description:
-        parameters['description'] = description
-    result = project_controller.create(parameters=[parameters])
-    click.echo(result)
+    if file:
+        resulting_message = "CREATED PROJECTS:\n ["
+        try:
+            parameters = utils.parse_file(file, content_format)
+        except Exception as e:
+            raise exception.ClientException(400, e.message)
+        try:
+            result = project_controller.create(parameters=parameters)
+        except Exception as e:
+            raise exception.ClientException(e.code, e.message) #todo(jorgesece): check it
+        for item in result:
+            resulting_message = '%s%s\n' % (resulting_message, item)
+        resulting_message = '%s]' % resulting_message
+    else:
+        parameters = {'name': name}
+        if description:
+            parameters['description'] = description
+        resulting_message = project_controller.create(parameters=[parameters])
+    click.echo(resulting_message)
 
 
 @project.command('delete')
 @click.option('--id', '-i', default=None, help='Identification of project')
-@click.option('--file', '-f', default=None, help='File with list of projects ids')
+@click.option('--file', '-f', default=None, help='File with list of projects ids. [{"id"="xx"},{"id"="xx2"}..]')
 @click.option('--content_format', '-cf',  default='json', help='Format file (json or yaml).')
 def project_delete(id, file, content_format):
     """Delelete."""
@@ -75,27 +91,6 @@ def project_delete(id, file, content_format):
             raise exception.ClientException(404, "You should indicate an id or a list of them")
     result = project_controller.delete(parameters=parameters)
     click.echo(result)
-
-@project.command('createBunch')
-@click.argument('file')
-@click.option('--content_format', '-f',  default='json', help='Format file (json or yaml).')
-def project_create(file, content_format):
-    """Creates new projects from a file."""
-    resulting_message = "CREATED PROJECTS:\n ["
-    project_controller = Controller('projects')
-    try:
-        parameters = utils.parse_file(file, content_format)
-    except Exception as e:
-        raise exception.ClientException(400, e.message)
-    try:
-        result = project_controller.create(parameters=parameters)
-    except Exception as e:
-        raise exception.ClientException(e.code, e.message) #todo(jorgesece): check it
-
-    for item in result:
-        resulting_message = '%s%s\n' % (resulting_message, item)
-    resulting_message = '%s]' % resulting_message
-    click.echo(resulting_message)
 
 
 @openstackcli.group()

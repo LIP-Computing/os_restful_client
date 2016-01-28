@@ -23,8 +23,7 @@ import tests
 from driver import parsers
 
 
-def configure_env():
-    project_id = "484d3a7eeb4f4462b329c1d0463cf324"
+def configure_env(project_id):
     app = KeySession().create_keystone("admin", "stack1", project_id)
     token = app.auth_token # fixme(jorgesece): check what to do with auth ¿password or token?
     os.environ.data['OS_AUTH_URL'] = '127.0.0.23'
@@ -37,7 +36,8 @@ class TestIntegrationProjectCommand(tests.TestCaseCommandLine):
 
     def setUp(self):
         super(TestIntegrationProjectCommand, self).setUp()
-        configure_env()
+        self.project_id = "484d3a7eeb4f4462b329c1d0463cf324"
+        configure_env(self.project_id)
 
     def test_project_list(self):
         result = self.runner.invoke(cli.project, ['list'])
@@ -45,12 +45,12 @@ class TestIntegrationProjectCommand(tests.TestCaseCommandLine):
         self.assertIsNone(result.exception)
 
     def test_project_create_delete(self):
-        result = self.runner.invoke(cli.project, ['create','name3'])
+        result = self.runner.invoke(cli.project, ['create','--name=name1'])
         #json.loads(result.output_bytes.replace ("u\'", "\"").replace ("\'", "\"").replace("True","\"True\"").replace("None","\"None\""))[0]['project']['id']
         self.assertEqual(result.exit_code,0)
         self.assertIsNone(result.exception)
         #delete
-        result_dict = parsers.json_load_from_os_string(result.output_bytes)
+        result_dict = parsers.json_load_from_client(result.output_bytes)
         # var = "[{u'project': {u'description': u'', u'links': {u'self': u'http://localhost/v3/projects/e2b42b2aa5d5444f833b94d973571b63'}, u'enabled': True, u'id': u'e2b42b2aa5d5444f833b94d973571b63', u'parent_id': None, u'domain_id': u'default', u'name': u'name3'}}]"
         # result_dict = parsers.json_load_from_os_string(var)
         for item in result_dict:
@@ -60,7 +60,7 @@ class TestIntegrationProjectCommand(tests.TestCaseCommandLine):
             self.assertIsNone(result_delete.exception)
 
     def test_project_create_delete_bunch(self):
-        result = self.runner.invoke(cli.project, ['createBunch','../json_file_example.json'])
+        result = self.runner.invoke(cli.project, ['create','--file=../json_file_example.json'])
         #json.loads(result.output_bytes.replace ("u\'", "\"").replace ("\'", "\"").replace("True","\"True\"").replace("None","\"None\""))[0]['project']['id']
         self.assertEqual(result.exit_code,0)
         self.assertIsNone(result.exception)
@@ -92,12 +92,17 @@ class TestIntegrationProjectController(testtools.TestCase):
 
     def setUp(self):
         super(TestIntegrationProjectController, self).setUp()
-        configure_env()
+        self.project_id = "484d3a7eeb4f4462b329c1d0463cf324"
+        configure_env(self.project_id)
         self.controller = Controller('projects')
 
     def test_index(self):
         result = self.controller.index()
         self.assertIsNotNone(result)
+
+    # def test_show(self):
+    #     result = self.controller.index()
+    #     self.assertIsNotNone(result)
 
     def test_create_delete(self):
         list1 = self.controller.index()
