@@ -58,17 +58,17 @@ def get_resource_from_path(str, delete_last):
     return out
 
 
-def parse_file (file, content_format):
-    try:
-        fp = open(file, 'r')
-    except:
-        raise Exception("File not found or corrupt")
+def parse_file(fp, content_format):
+    # try:
+    #     fp = open(file, 'r')
+    # except:
+    #     raise Exception("File not found or corrupt")
     if content_format == 'json':
         str = json.load(fp)
     elif content_format == 'yaml':
         str = yaml.load(fp)
     else:
-        fp.close()
+#        fp.close()
         raise Exception("Invalid format")
-    fp.close()
+#    fp.close()
     return str

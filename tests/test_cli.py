@@ -63,9 +63,9 @@ class TestCommandProject(tests.TestCaseCommandLine):
     @mock.patch.object(controller.Controller, "create")
     def test_project_create_bunch_error_file(self, m_create):
         result = self.runner.invoke(cli.project, ['create','--file=file_does_not_exist'])
-        self.assertEqual(result.exit_code,-1)
+        self.assertEqual(result.exit_code, 2)
         self.assertIsNotNone(result.exception)
-        self.assertEqual(result.exception.code, 400)
+        self.assertEqual(result.exception.code, 2)
 
     @mock.patch.object(controller.Controller, "create")
     def test_project_create_bunch_wrong_format(self, m_create):

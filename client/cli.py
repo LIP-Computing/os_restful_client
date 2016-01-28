@@ -45,7 +45,7 @@ def project_list():
 @project.command('create')
 @click.option('--name', '-n', help='Name project of the project.')# fixme(jorgesece): create justa a attr with all attrs.
 @click.option('--description', '-d', help='Description of the project.')
-@click.option('--file', '-f', default=None, help='File with list of projects ids')
+@click.option('--file', '-f', default=None, help='File with list of projects attributes', type=click.File('r'))
 @click.option('--content_format', '-cf',  default='json', help='Format file (json or yaml).')
 def project_create(name, description, file, content_format):
     """Creates a new project."""
@@ -73,7 +73,9 @@ def project_create(name, description, file, content_format):
 
 @project.command('delete')
 @click.option('--id', '-i', default=None, help='Identification of project')
-@click.option('--file', '-f', default=None, help='File with list of projects ids. [{"id"="xx"},{"id"="xx2"}..]')
+@click.option('--file', '-f', default=None,
+              help='File with list of projects ids. [{"id"="xx"},{"id"="xx2"}..]',
+              type=click.File('r'))
 @click.option('--content_format', '-cf',  default='json', help='Format file (json or yaml).')
 def project_delete(id, file, content_format):
     """Delelete."""
