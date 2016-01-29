@@ -19,6 +19,7 @@ from os_restfulcli.api.controller import Controller
 from os_restfulcli.driver import exception
 
 from os_restfulcli.driver import utils
+from os_restfulcli.client import client_utils
 
 
 @click.group()
@@ -43,30 +44,32 @@ def project_list():
 
 
 @project.command('create', help="Select either --attributes or --file input")
-@click.option('--attributes', '-a', default=None#,callback=utils.validate_attributes)
-              , help='Name project of the project: {name:"name_project", description:"description project",...}')#,callback=utils.validate_attributes)
-@click.option('--file', '-f', default=None, help='File with list of projects attributes', type=click.File('r'))
+@click.option('--attributes', '-a', default=None, type=click.STRING
+              , callback=client_utils.validate_attributes
+              , help='Project attributes: {"name":"name_project", "description":"description project",...}')
+@click.option('--file', '-f', default=None, type=click.File('r')
+              , help='File with list of projects attributes'
+              , callback=client_utils.validate_file_attributes)
 @click.option('--content_format', '-cf',  default='json'
-              , help='Format file.'
+              , help='Format file.' , is_eager =True
               , type=click.Choice(['json', 'yaml']))
 def project_create(attributes, file, content_format):
     """Creates a new project."""
     project_controller = Controller('projects')
     resulting_message = "CREATED PROJECTS:\n ["
+    if file:
+        parameters = file
+    elif attributes:
+        parameters = [attributes]
+    else:
+        raise click.BadArgumentUsage('You need to specify either --attributes or --file')
     try:
-        if file:
-            parameters = utils.parse_file(file, content_format)
-        elif attributes:
-            parameters = utils.parse_attributes(attributes)
-        else:
-            raise exception.ClientException(400, 'You need to specify either --attributes or --file')
         result = project_controller.create(parameters=parameters)
-        for item in result:
-            resulting_message = '%s%s\n' % (resulting_message, item)
-        resulting_message = '%s]' % resulting_message
     except Exception as e:
-    #    raise e
-        raise exception.ClientException(e.code, e.message) #todo(jorgesece): check it
+        raise click.echo('Internal error: %' % e.message)
+    for item in result:
+        resulting_message = '%s%s\n' % (resulting_message, item)
+    resulting_message = '%s]' % resulting_message
     click.echo(resulting_message)
 
 
@@ -74,25 +77,26 @@ def project_create(attributes, file, content_format):
 @click.option('--id', '-i', default=None, help='Identification of project')
 @click.option('--file', '-f', default=None,
               help='File with list of projects ids. [{"id"="xx"},{"id"="xx2"}..]',
-              type=click.File('r'))
+              type=click.File('r')
+              , callback=client_utils.validate_file_attributes)
 @click.option('--content_format', '-cf',  default='json'
-              , help='Format file.'
+              , help='Format file.', is_eager=True
               , type=click.Choice(['json', 'yaml']))
 def project_delete(id, file, content_format):
     """Delelete."""
     project_controller = Controller('projects')
     if file:
-        project_controller = Controller('projects')
-        try:
-            parameters = utils.parse_file(file, content_format) #fixme(jorgesece): check if file contains id
-        except Exception as e:
-            raise exception.ClientException(400, e.message)
+        parameters = file
+    elif id:
+        parameters = [id]
     else:
-        if id:
-            parameters = [{'id': id}]
-        else:
-            raise exception.ClientException(404, "You should indicate an id or a list of them")
-    result = project_controller.delete(parameters=parameters)
+        raise click.BadArgumentUsage('You need to specify either --attributes or --file')
+
+    try:
+        result = project_controller.delete(parameters=parameters)
+    except Exception as e:
+        raise click.echo('Internal error: %' % e.message)
+
     click.echo(result)
 
 

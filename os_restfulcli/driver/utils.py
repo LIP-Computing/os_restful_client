@@ -81,8 +81,9 @@ def parse_file(fp, content_format):
 #'--attributes={name=name1,definition="una definition"'
 def parse_attributes(str):
     try:
-        out = json.loads(str.replace("{", "{\"").replace("}", "}").replace(":", "\":").replace(",", ",\""))
+        out = json.loads(str)#.replace("{", "{\"").replace("}", "}").replace(":", "\":").replace(",", ",\""))
     except Exception as e:
         raise ParseException(code=400,message="Invalid format")
     return [out]
+
 

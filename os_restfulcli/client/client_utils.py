@@ -15,10 +15,26 @@
 # under the License.
 
 import click
+import json
+import yaml
 
 def validate_attributes(ctx, param, value):
+    if not value:
+        return value
     try:
-        rolls, dice = map(int, value.split('d', 2))
-        return (dice, rolls)
+        dic_value = json.loads(value)
+        return dic_value
     except ValueError:
-        raise click.BadParameter('rolls need to be in format NdM')
+        raise click.BadParameter('{"name":"name_project", "description":"description project",...}')
+
+def validate_file_attributes(ctx, param, value):
+    if not value:
+        return value
+    try:
+        if ctx.params['content_format'] == 'json':
+            return json.load(value)
+        else:
+            return yaml.load(value)
+
+    except ValueError:
+        raise click.BadParameter("Innvalid file format")

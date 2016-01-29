@@ -71,7 +71,7 @@ class ParseException(Exception):
         return repr(self.message)
 
 
-class ClientException(Exception):
+class ControllerException(Exception):
 
     def __init__(self, code, message):
         self.message = message
