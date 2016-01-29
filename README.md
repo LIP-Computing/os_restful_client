@@ -5,6 +5,7 @@ Python openstack client which interacts with the OS restful api directly
 
 ## Configuration
 The client requires the following environment variables:
+    
     $ export OS_AUTH_URL=127.0.0.23
     $ export OS_PORT=5000
     $ export OS_TOKEN=XXX
