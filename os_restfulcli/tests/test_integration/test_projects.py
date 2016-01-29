@@ -133,6 +133,11 @@ class TestIntegrationProjectController(testtools.TestCase):
         list3 = self.controller.index()
         self.assertEqual(list1['projects'].__len__(), list3['projects'].__len__())
 
+    def test_bunch_create_wrong_id(self):
+        wrong_id= [{"id":"8903489034890234"}]
+        result = self.controller.delete(wrong_id)
+        self.assertIsNotNone(result)
+
 # class TestIntegrationNetwork(base.TestController):
 #
 #     def setUp(self):

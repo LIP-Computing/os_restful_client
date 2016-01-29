@@ -136,7 +136,8 @@ class OpenStackDriver(object):
         """
         req = self._make_delete_request(path)
         response = req.get_response(None)
-        return response
+        json_response = self.get_from_response(response, {})
+        return json_response
 
     # def get_network(self, req, id):
     #     """Get info from a network. It returns json code from the server

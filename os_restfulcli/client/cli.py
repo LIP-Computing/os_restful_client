@@ -93,7 +93,7 @@ def project_delete(id, file, content_format):
     elif id:
         parameters = [{"id":id}]
     else:
-        raise click.BadArgumentUsage('You need to specify either --attributes or --file')
+        raise click.BadArgumentUsage('You need to specify either --id or --file')
 
     try:
         result = project_controller.delete(parameters=parameters)

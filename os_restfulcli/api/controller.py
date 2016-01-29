@@ -74,11 +74,15 @@ class Controller(object):
         """delete networks which satisfy the parameters
         :param parameters:
         """
+        deleted = []
         for param in parameters:
-            # fixme(jorgesece): try?
-            path = "/%s/%s" % (self.resource, param['id'])
-            self.os_helper.delete(path)
-        return []
+            try:
+                path = "/%s/%s" % (self.resource, param['id'])
+                result = self.os_helper.delete(path)
+            except Exception as e:
+                result = '{"Error":{"id":"%s", "details": "%s"}}' % (param['id'], e.message)
+            deleted.append(result)
+        return deleted
     #
     # def run_action(self, req, id, body, parameters = None):
     #     raise exception.NotFound()
