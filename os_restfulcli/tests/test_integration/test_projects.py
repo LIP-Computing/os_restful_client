@@ -19,7 +19,7 @@ import testtools
 
 import os_restfulcli.tests
 from os_restfulcli.client import cli
-from os_restfulcli.client.controller import Controller
+from os_restfulcli.client.controller import ControllerResource
 from os_restfulcli.credentials.session import KeySession
 from os_restfulcli.driver import parsers
 
@@ -46,7 +46,7 @@ class TestIntegrationProjectCommand(os_restfulcli.tests.TestCaseCommandLine):
         self.assertIsNone(result.exception)
 
     def test_project_create_delete(self):
-        result = self.runner.invoke(cli.project, ['create', '--attributes={"name":"name3"}'])
+        result = self.runner.invoke(cli.project, ['create', '--attributes={"name":"name53"}'])
         self.assertEqual(result.exit_code,0)
         self.assertIsNone(result.exception)
         #delete
@@ -95,7 +95,7 @@ class TestIntegrationProjectController(testtools.TestCase):
         super(TestIntegrationProjectController, self).setUp()
         self.project_id = "484d3a7eeb4f4462b329c1d0463cf324"
         configure_env(self.project_id)
-        self.controller = Controller('projects')
+        self.controller = ControllerResource('projects')
 
     def test_index(self):
         result = self.controller.index()

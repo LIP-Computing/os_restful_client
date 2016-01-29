@@ -19,7 +19,8 @@ import sys
 import click
 
 from os_restfulcli.client import client_utils
-from os_restfulcli.client.controller import Controller
+from os_restfulcli.client.controller import ControllerResource
+from os_restfulcli.client.controller import ControllerClient
 
 sys.tracebacklimit=0
 
@@ -38,7 +39,7 @@ def project():
 
 @project.command('list')
 def project_list():
-    project_controller = Controller('projects')
+    project_controller = ControllerResource('projects')
     result = project_controller.index() # todo(jorgesece): parse result to json
     click.echo(result)
 
@@ -55,23 +56,14 @@ def project_list():
               , type=click.Choice(['json', 'yaml']))
 def project_create(attributes, file, content_format):
     """Creates a new project."""
-    project_controller = Controller('projects')
-    resulting_message = "CREATED PROJECTS:\n ["
-    if file:
-        parameters = file
-    elif attributes:
-        parameters = [attributes]
-    else:
-        # click.get_current_context.get_help()
-        raise click.BadArgumentUsage('You need to specify either --attributes or --file')
+    client_controller = ControllerClient('projects')
     try:
-        result = project_controller.create(parameters=parameters)
+        result = client_controller.create(attributes, file, content_format)
+    except TypeError as e:
+        raise click.BadArgumentUsage(e.message)
     except Exception as e:
-        raise click.ClickException(e.message)
-    for item in result:
-        resulting_message = '%s%s\n' % (resulting_message, item)
-    resulting_message = '%s]' % resulting_message
-    click.echo(resulting_message)
+            raise click.ClickException(e.message)
+    click.echo(result)
 
 
 @project.command('delete',help="Select either --id or --file input")
@@ -87,16 +79,11 @@ def project_create(attributes, file, content_format):
               , type=click.Choice(['json', 'yaml']))
 def project_delete(id, file, content_format):
     """Delelete."""
-    project_controller = Controller('projects')
-    if file:
-        parameters = file
-    elif id:
-        parameters = [{"id":id}]
-    else:
-        raise click.BadArgumentUsage('You need to specify either --id or --file')
-
+    client_controller = ControllerClient('projects')
     try:
-        result = project_controller.delete(parameters=parameters)
+        result = client_controller.delete(id, file, content_format)
+    except TypeError as e:
+        raise click.BadArgumentUsage(e.message)
     except Exception as e:
         raise click.ClickException(e.message)
     click.echo(result)

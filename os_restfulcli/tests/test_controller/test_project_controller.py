@@ -18,7 +18,7 @@ import os
 import mock
 import testtools
 
-from os_restfulcli.client.controller import Controller
+from os_restfulcli.client.controller import ControllerResource
 from os_restfulcli.driver.openstack import OpenStackDriver
 
 
@@ -30,7 +30,7 @@ class TestCaseAPIController(testtools.TestCase):
         os.environ.data['OS_PORT'] = '5000'
         os.environ.data['OS_VERSION'] = 'v3'
         os.environ.data['OS_TOKEN'] = 'token'
-        self.controller = Controller(mock.MagicMock())
+        self.controller = ControllerResource(mock.MagicMock())
 
     @mock.patch.object(OpenStackDriver, "index")
     def test_index(self, m_index):

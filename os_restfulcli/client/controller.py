@@ -22,7 +22,7 @@ from os_restfulcli.client import client_utils
 from os_restfulcli.exceptions import ControllerException
 
 
-class Controller(object):
+class ControllerResource(object):
     resource = None
 
     def __init__(self, resource):
@@ -88,7 +88,47 @@ class Controller(object):
             except Exception as e:
                 result = '{"status": "Error", "id":"%s", "description": "%s"}' % (param['id'], e.message)
             deleted.append(result)
-        return [deleted]
+        return deleted
     #
     # def run_action(self, req, id, body, parameters = None):
     #     raise exception.NotFound()
+
+class ControllerClient(object):
+
+    def __init__(self, resource):
+        self.control = ControllerResource(resource)
+
+    def index(self):
+        result = self.control.index()
+        return result
+
+    def create(self, attributes, file, format ):
+        resulting_message = "CREATED:\n ["
+        if file:
+            parameters = file
+        elif attributes:
+            parameters = [attributes]
+        else:
+            # click.get_current_context.get_help()
+            raise TypeError('You need to specify either --attributes or --file')
+
+        result = self.control.create(parameters)
+        for item in result:
+            resulting_message = '%s%s\n' % (resulting_message, item)
+        resulting_message = '%s]' % resulting_message
+        return resulting_message
+
+    def delete(self, id, file, format):
+        resulting_message = "DELETED:\n ["
+        if file:
+            parameters = file
+        elif id:
+            parameters = [{"id":id}]
+        else:
+            raise TypeError('You need to specify either --id or --file')
+
+        result = self.control.delete(parameters=parameters)
+        for item in result:
+            '%s%s\n' % (resulting_message, item)
+        resulting_message = '%s]' % resulting_message
+        return resulting_message
