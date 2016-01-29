@@ -15,12 +15,12 @@
 # under the License.
 
 import click
-from os_restfulcli.api.controller import Controller
-from os_restfulcli.driver import exception
+import sys
 
-from os_restfulcli.driver import utils
+from os_restfulcli.api.controller import Controller
 from os_restfulcli.client import client_utils
 
+sys.tracebacklimit=0
 
 @click.group()
 @click.version_option()
@@ -62,6 +62,7 @@ def project_create(attributes, file, content_format):
     elif attributes:
         parameters = [attributes]
     else:
+        # click.get_current_context.get_help()
         raise click.BadArgumentUsage('You need to specify either --attributes or --file')
     try:
         result = project_controller.create(parameters=parameters)
@@ -74,7 +75,9 @@ def project_create(attributes, file, content_format):
 
 
 @project.command('delete',help="Select either --id or --file input")
-@click.option('--id', '-i', default=None, help='Identification of project')
+@click.option('--id', '-i', default=None
+              , type = click.STRING
+              , help='Identification of project')
 @click.option('--file', '-f', default=None,
               help='File with list of projects ids. [{"id"="xx"},{"id"="xx2"}..]',
               type=click.File('r')
@@ -88,7 +91,7 @@ def project_delete(id, file, content_format):
     if file:
         parameters = file
     elif id:
-        parameters = [id]
+        parameters = [{"id":id}]
     else:
         raise click.BadArgumentUsage('You need to specify either --attributes or --file')
 

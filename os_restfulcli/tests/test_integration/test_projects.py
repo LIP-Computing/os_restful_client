@@ -46,14 +46,13 @@ class TestIntegrationProjectCommand(os_restfulcli.tests.TestCaseCommandLine):
         self.assertIsNone(result.exception)
 
     def test_project_create_delete(self):
-        result = self.runner.invoke(cli.project, ['create', '--attributes={name:"name1"}'])
-        #json.loads(result.output_bytes.replace ("u\'", "\"").replace ("\'", "\"").replace("True","\"True\"").replace("None","\"None\""))[0]['project']['id']
+        result = self.runner.invoke(cli.project, ['create', '--attributes={"name":"name3"}'])
         self.assertEqual(result.exit_code,0)
         self.assertIsNone(result.exception)
         #delete
         result_dict = parsers.json_load_from_client(result.output_bytes)
-        # var = "[{u'project': {u'description': u'', u'links': {u'self': u'http://localhost/v3/projects/e2b42b2aa5d5444f833b94d973571b63'}, u'enabled': True, u'id': u'e2b42b2aa5d5444f833b94d973571b63', u'parent_id': None, u'domain_id': u'default', u'name': u'name3'}}]"
-        # result_dict = parsers.json_load_from_os_string(var)
+        # var = "[{u'project': {u'description': u'', u'links': {u'self': u'http://localhost/v3/projects/e2b42b2aa5d5444f833b94d973571b63'}, u'enabled': True, u'id': u'7f4062b4ee104705a4c553e820e3ffb8', u'parent_id': None, u'domain_id': u'default', u'name': u'name3'}}]"
+        # result_dict = parsers.json_load_from_client(var)
         for item in result_dict:
             id = item['project']['id']
             result_delete = self.runner.invoke(cli.project, ['delete', '--id=%s' % id])
@@ -62,13 +61,9 @@ class TestIntegrationProjectCommand(os_restfulcli.tests.TestCaseCommandLine):
 
     def test_project_create_delete_bunch(self):
         result = self.runner.invoke(cli.project, ['create', '--file=../json_file_example.json'])
-        #json.loads(result.output_bytes.replace ("u\'", "\"").replace ("\'", "\"").replace("True","\"True\"").replace("None","\"None\""))[0]['project']['id']
         self.assertEqual(result.exit_code,0)
         self.assertIsNone(result.exception)
         #delete
-        #
-        #var = "CREATED PROJECTS: \n {u'project': {u'description': u'description lip 1', u'links': {u'self': u'http://localhost/v3/projects/7bf753af62454620bb71aa939c4c4d04'}, u'enabled': True, u'id': u'7bf753af62454620bb71aa939c4c4d04', u'parent_id': None, u'domain_id': u'default', u'name': u'lipjson1'}} \n {u'project': {u'description': u'description lip 1', u'links': {u'self': u'http://localhost/v3/projects/f86ae5fdc3fb427ca31c493282ae1dc8'}, u'enabled': True, u'id': u'f86ae5fdc3fb427ca31c493282ae1dc8', u'parent_id': None, u'domain_id': u'default', u'name': u'lipjson2'}}"
-
         result_dict = parsers.json_load_from_client(result.output_bytes)
         # var = "[{u'project': {u'description': u'', u'links': {u'self': u'http://localhost/v3/projects/e2b42b2aa5d5444f833b94d973571b63'}, u'enabled': True, u'id': u'e2b42b2aa5d5444f833b94d973571b63', u'parent_id': None, u'domain_id': u'default', u'name': u'name3'}}]"
         # result_dict = parsers.json_load_from_os_string(var)

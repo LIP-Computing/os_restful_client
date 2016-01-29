@@ -52,7 +52,10 @@ class Controller(object):
         path = '/%s' % self.resource
         created = []
         for param in parameters:
-            result = self.os_helper.create(path, param) # todo(jorgesece): parse out, code...
+            try:
+                result = self.os_helper.create(path, param) # todo(jorgesece): parse out, code...
+            except Exception as e:
+                result = '{"Error":{"name":"%s", "details": "%s"}}' % (param['name'], e.message)
             created.append(result)
 
         return created
