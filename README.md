@@ -3,19 +3,23 @@
 Python openstack client which interacts with the OS restful api directly
 
 
+# Configuration
+The client requires the following environment variables:
+export OS_AUTH_URL=127.0.0.23
+export OS_PORT=5000
+export OS_TOKEN=XXX
+export OS_VERSION=v3
+
 # Installation
-
-If you don't use `pipsi`, you're missing out.
-Here are [installation instructions](https://github.com/mitsuhiko/pipsi#readme).
-
-Simply run:
-
-    $ pipsi install .
+    $ git clone https://github.com/LIP-Computing/os_restful_client.git
+    $ cd os_restful_client
+    $ pip install .
 
 
 # Usage
 
+
 To use it:
 
-    $ os-restful-client --help
+    $ os_restfulcli --help
 
