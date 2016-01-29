@@ -57,7 +57,7 @@ def exception_from_response(response):
         code = 500
         message = "Unknown error happenened processing response %s" % response
         title = message
-    logger.warning('Response exception. %s:%s', code, message)
+    #logger.warning('Response exception. %s:%s', code, message)
     exc = exceptions.get(code, webob.exc.HTTPInternalServerError)
     return exc(message=title)
 

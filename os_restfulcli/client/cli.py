@@ -40,7 +40,6 @@ def project_list():
     project_controller = Controller('projects')
     result = project_controller.index() # todo(jorgesece): parse result to json
     click.echo(result)
-    click.echo('NOT IMPLEMENTED. Created list')
 
 
 @project.command('create', help="Select either --attributes or --file input")
@@ -67,7 +66,7 @@ def project_create(attributes, file, content_format):
     try:
         result = project_controller.create(parameters=parameters)
     except Exception as e:
-        raise click.echo('Internal error: %' % e.message)
+        raise click.ClickException(e.message)
     for item in result:
         resulting_message = '%s%s\n' % (resulting_message, item)
     resulting_message = '%s]' % resulting_message
@@ -98,8 +97,7 @@ def project_delete(id, file, content_format):
     try:
         result = project_controller.delete(parameters=parameters)
     except Exception as e:
-        raise click.echo('Internal error: %' % e.message)
-
+        raise click.ClickException(e.message)
     click.echo(result)
 
 

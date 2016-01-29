@@ -73,6 +73,11 @@ class TestIntegrationProjectCommand(os_restfulcli.tests.TestCaseCommandLine):
             self.assertEqual(result_delete.exit_code,0)
             self.assertIsNone(result_delete.exception)
 
+    def test_project_delete_bunch(self):
+        result = self.runner.invoke(cli.project, ['delete', '--file=/home/jorge/Desktop/test_delete.txt', '--content_format=yaml'])
+        self.assertEqual(result.exit_code,0)
+        self.assertIsNone(result.exception)
+
     # def test_project_create_bunch_yaml_ok(self, m_create):
     #     result = self.runner.invoke(cli.project, ['createBunch','yaml_file_example.yml','--content_format=yaml'])
     #     self.assertEqual(result.exit_code,0)
@@ -137,6 +142,11 @@ class TestIntegrationProjectController(testtools.TestCase):
         wrong_id= [{"id":"8903489034890234"}]
         result = self.controller.delete(wrong_id)
         self.assertIsNotNone(result)
+
+    # def test_bunch_create_ok(self):
+    #     wrong_id= [{"id":"bdcdf27857b04883970ae31cf0c00031"}]
+    #     result = self.controller.delete(wrong_id)
+    #     self.assertIsNotNone(result)
 
 # class TestIntegrationNetwork(base.TestController):
 #

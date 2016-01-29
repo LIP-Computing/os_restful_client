@@ -19,6 +19,7 @@ from os_restfulcli.driver.exception import ParseException
 from os_restfulcli.driver.openstack import OpenStackDriver
 
 from os_restfulcli import api
+from os_restfulcli.driver.exception import ControllerException
 
 
 class Controller(object):
@@ -52,6 +53,8 @@ class Controller(object):
         path = '/%s' % self.resource
         created = []
         for param in parameters:
+            if 'name' not in param:
+                raise ParseException(400, "Bad attribute definition for OS")
             try:
                 result = self.os_helper.create(path, param) # todo(jorgesece): parse out, code...
             except Exception as e:
@@ -78,11 +81,14 @@ class Controller(object):
         for param in parameters:
             try:
                 path = "/%s/%s" % (self.resource, param['id'])
-                result = self.os_helper.delete(path)
+                result = {'id':param['id'],'status':self.os_helper.delete(path)}
+
+            except TypeError:
+                raise ParseException(400, "Bad attribute definition for OS")
             except Exception as e:
-                result = '{"Error":{"id":"%s", "details": "%s"}}' % (param['id'], e.message)
+                result = '{"status": "Error", "id":"%s", "description": "%s"}' % (param['id'], e.message)
             deleted.append(result)
-        return deleted
+        return [deleted]
     #
     # def run_action(self, req, id, body, parameters = None):
     #     raise exception.NotFound()

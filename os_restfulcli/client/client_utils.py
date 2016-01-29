@@ -37,4 +37,4 @@ def validate_file_attributes(ctx, param, value):
             return yaml.load(value)
 
     except ValueError:
-        raise click.BadParameter("Innvalid file format")
+        raise click.BadParameter("Format specified is %s. Choices: -cf json|yaml" % ctx.params['content_format'])

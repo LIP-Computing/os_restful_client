@@ -34,9 +34,11 @@ class OpenStackDriver(object):
 
     @staticmethod
     def get_from_response(response, default):
-        if response.status_int in [200, 201, 202, 204]:
+        if response.status_int in [200, 201, 202]:
             exception.logger.debug('HTTP response: %s', response.status_int)
             return response.json_body #.get(element, default)
+        elif response.status_int in [204]:
+            return "Non Content"
         else:
             raise exception.exception_from_response(response)
 
