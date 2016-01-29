@@ -81,17 +81,15 @@ class ControllerResource(object):
         for param in parameters:
             try:
                 path = "/%s/%s" % (self.resource, param['id'])
-                result = {'id':param['id'],'status':self.os_helper.delete(path)}
-
+                result = self.os_helper.delete(path)
+                result = {'status': 'OK', 'id':param['id'], 'description': result}
             except TypeError:
-                raise ParseException(400, "Bad attribute definition for OS")
+                result = '{"status": "Error", "description": "Bad attribute definition for OS"}'
             except Exception as e:
                 result = '{"status": "Error", "id":"%s", "description": "%s"}' % (param['id'], e.message)
             deleted.append(result)
         return deleted
-    #
-    # def run_action(self, req, id, body, parameters = None):
-    #     raise exception.NotFound()
+
 
 class ControllerClient(object):
 
@@ -129,6 +127,7 @@ class ControllerClient(object):
 
         result = self.control.delete(parameters=parameters)
         for item in result:
-            '%s%s\n' % (resulting_message, item)
+            resulting_message = '%s%s\n' % (resulting_message, item)
         resulting_message = '%s]' % resulting_message
+
         return resulting_message

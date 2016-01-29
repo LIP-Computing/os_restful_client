@@ -56,8 +56,8 @@ def project_list():
               , type=click.Choice(['json', 'yaml']))
 def project_create(attributes, file, content_format):
     """Creates a new project."""
-    client_controller = ControllerClient('projects')
     try:
+        client_controller = ControllerClient('projects')
         result = client_controller.create(attributes, file, content_format)
     except TypeError as e:
         raise click.BadArgumentUsage(e.message)
@@ -79,8 +79,8 @@ def project_create(attributes, file, content_format):
               , type=click.Choice(['json', 'yaml']))
 def project_delete(id, file, content_format):
     """Delelete."""
-    client_controller = ControllerClient('projects')
     try:
+        client_controller = ControllerClient('projects')
         result = client_controller.delete(id, file, content_format)
     except TypeError as e:
         raise click.BadArgumentUsage(e.message)
