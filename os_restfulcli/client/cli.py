@@ -90,21 +90,56 @@ def project_delete(id, file, content_format):
 
 
 @openstackcli.group()
-def user():
+def users():
     """Manages users."""
 
+@users.command('list')
+def project_list():
+    project_controller = ControllerResource('users')
+    result = project_controller.index()
+    click.echo(result)
 
-@user.command('create')
-@click.argument('name')
-@click.option('--description', '-d', help='Description of the user.')
-def user_create(name,description):
-    """Creates a new ship."""
-    click.echo('NOT IMPLEMENTED. Created user %s' % name)
+@users.command('create', help="Select either --attributes or --file input")
+@click.option('--attributes', '-a', default=None, type=click.STRING
+              , callback=client_utils.validate_attributes
+              , help='Project attributes: {"name":"name_project", "description":"description project",...}')
+@click.option('--file', '-f', default=None, type=click.File('r')
+              , help='File with list of projects attributes'
+              , callback=client_utils.validate_file_attributes)
+@click.option('--content_format', '-cf',  default='json'
+              , help='Format file.' , is_eager =True
+              , type=click.Choice(['json', 'yaml']))
+def users_create(attributes, file, content_format):
+    """Creates a new project."""
+    try:
+        client_controller = ControllerClient('users')
+        result = client_controller.create(attributes, file, content_format)
+    except TypeError as e:
+        raise click.BadArgumentUsage(e.message)
+    except Exception as e:
+            raise click.ClickException(e.message)
+    click.echo(result)
 
 
-@user.command('createBunch')
-@click.argument('file')
-def user_create(file):
-    """Creates a new ship."""
-    click.echo('NOT IMPLEMENTED. Created user from a JSON file %s' % file)
+@users.command('delete',help="Select either --id or --file input")
+@click.option('--id', '-i', default=None
+              , type = click.STRING
+              , help='Identification of project')
+@click.option('--file', '-f', default=None,
+              help='File with list of projects ids. [{"id"="xx"},{"id"="xx2"}..]',
+              type=click.File('r')
+              , callback=client_utils.validate_file_attributes)
+@click.option('--content_format', '-cf',  default='json'
+              , help='Format file.', is_eager=True
+              , type=click.Choice(['json', 'yaml']))
+def users_delete(id, file, content_format):
+    """Delelete."""
+    try:
+        client_controller = ControllerClient('users')
+        result = client_controller.delete(id, file, content_format)
+    except TypeError as e:
+        raise click.BadArgumentUsage(e.message)
+    except Exception as e:
+        raise click.ClickException(e.message)
+    click.echo(result)
 
