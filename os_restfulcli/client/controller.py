@@ -15,11 +15,11 @@
 # under the License.
 
 
-from os_restfulcli.driver.exception import ParseException
+from os_restfulcli.exceptions import ParseException
 from os_restfulcli.driver.openstack import OpenStackDriver
 
-from os_restfulcli import api
-from os_restfulcli.driver.exception import ControllerException
+from os_restfulcli.client import client_utils
+from os_restfulcli.exceptions import ControllerException
 
 
 class Controller(object):
@@ -27,8 +27,8 @@ class Controller(object):
 
     def __init__(self, resource):
         self.resource = resource
-        if api.check_identity_variables():
-            self.identity = api.get_identity_variables()
+        if client_utils.check_identity_variables():
+            self.identity = client_utils.get_identity_variables()
         else:
             raise ParseException(401
                                  , 'Environmet variables are need: OS_AUTH_URL=127.0.0.23,'

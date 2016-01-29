@@ -14,9 +14,9 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 import mock
+
 import os_restfulcli.tests
-from os_restfulcli.api import controller
-from os_restfulcli.client import cli
+from os_restfulcli.client import cli, controller
 
 
 class TestCommandProject(os_restfulcli.tests.TestCaseCommandLine):

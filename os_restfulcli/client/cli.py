@@ -14,11 +14,12 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-import click
 import sys
 
-from os_restfulcli.api.controller import Controller
+import click
+
 from os_restfulcli.client import client_utils
+from os_restfulcli.client.controller import Controller
 
 sys.tracebacklimit=0
 

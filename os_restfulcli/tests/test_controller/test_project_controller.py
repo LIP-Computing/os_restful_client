@@ -17,9 +17,9 @@ import os
 
 import mock
 import testtools
-from os_restfulcli.driver.openstack import OpenStackDriver
 
-from os_restfulcli.api.controller import Controller
+from os_restfulcli.client.controller import Controller
+from os_restfulcli.driver.openstack import OpenStackDriver
 
 
 class TestCaseAPIController(testtools.TestCase):

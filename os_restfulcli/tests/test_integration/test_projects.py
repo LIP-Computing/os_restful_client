@@ -15,13 +15,13 @@
 #
 import os
 
-import os_restfulcli.tests
 import testtools
-from os_restfulcli.api.controller import Controller
-from os_restfulcli.client import cli
-from os_restfulcli.driver import parsers
 
+import os_restfulcli.tests
+from os_restfulcli.client import cli
+from os_restfulcli.client.controller import Controller
 from os_restfulcli.credentials.session import KeySession
+from os_restfulcli.driver import parsers
 
 
 def configure_env(project_id):

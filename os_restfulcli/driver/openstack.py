@@ -17,10 +17,10 @@
 import json
 
 import webob
-from os_restfulcli.driver import exception
+from os_restfulcli import exceptions
 from os_restfulcli.driver import parsers
 
-from os_restfulcli.driver import utils
+from os_restfulcli.driver import parsers
 
 
 class OpenStackDriver(object):
@@ -35,12 +35,12 @@ class OpenStackDriver(object):
     @staticmethod
     def get_from_response(response, default):
         if response.status_int in [200, 201, 202]:
-            exception.logger.debug('HTTP response: %s', response.status_int)
+            exceptions.logger.debug('HTTP response: %s', response.status_int)
             return response.json_body #.get(element, default)
         elif response.status_int in [204]:
             return "Non Content"
         else:
-            raise exception.exception_from_response(response)
+            raise exceptions.exception_from_response(response)
 
     def _get_req(self, path, method,
                  content_type="application/json",
@@ -77,7 +77,7 @@ class OpenStackDriver(object):
         if content_type is not None:
             new_req.content_type = content_type
         if body is not None:
-            new_req.body = utils.utf8(body)
+            new_req.body = parsers.utf8(body)
 
 
         return new_req
@@ -97,7 +97,7 @@ class OpenStackDriver(object):
         :param path: path resource
         :param parameters: parameters with values
         """
-        resource = utils.get_resource_from_path(path, True)
+        resource = parsers.get_resource_from_path(path, True)
         body = parsers.make_body(resource, parameters)
         return self._get_req(path, content_type="application/json", body=json.dumps(body), method="POST")
 
@@ -115,7 +115,7 @@ class OpenStackDriver(object):
         :param req: the incoming request
         :param parameters: parameters to filter results
         """
-        resource = utils.get_resource_from_path(path, False)
+        resource = parsers.get_resource_from_path(path, False)
         os_req = self._make_get_request(path, parameters)
         response = os_req.get_response(None)
         json_response = self.get_from_response(response, {})
