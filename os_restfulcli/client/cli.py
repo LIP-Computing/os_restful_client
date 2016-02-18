@@ -39,9 +39,10 @@ def project():
 
 @project.command('list')
 def project_list():
-    project_controller = ControllerResource('projects')
+    resource = 'projects'
+    project_controller = ControllerResource(resource)
     result = project_controller.index() # todo(jorgesece): parse result to json
-    click.echo(result)
+    client_utils.print_table(resource, result)
 
 
 @project.command('create', help="Select either --attributes or --file input")

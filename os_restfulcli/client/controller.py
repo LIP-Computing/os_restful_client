@@ -44,7 +44,7 @@ class ControllerResource(object):
         path = '/%s' % self.resource
         r = self.os_helper.index(path, parameters) # todo(jorgesece): parse out, code...
 
-        return r
+        return r[self.resource]
 
     def create(self, parameters):
         """Create a network instance in the cloud
