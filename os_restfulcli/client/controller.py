@@ -18,8 +18,8 @@
 from os_restfulcli.exceptions import ParseException
 from os_restfulcli.driver.openstack import OpenStackDriver
 
-from os_restfulcli.client import client_utils
-from os_restfulcli.exceptions import ControllerException
+from os_restfulcli.client import client_utils, parsers
+
 
 
 class ControllerResource(object):
@@ -42,7 +42,7 @@ class ControllerResource(object):
         :param parameters: request parameters
         """
         path = '/%s' % self.resource
-        r = self.os_helper.index(path, parameters) # todo(jorgesece): parse out, code...
+        r = self.os_helper.index(path, parameters)
 
         return r[self.resource]
 
@@ -52,16 +52,17 @@ class ControllerResource(object):
         """
         path = '/%s' % self.resource
         created = []
+        error_creation = []
         for param in parameters:
             if 'name' not in param:
                 raise ParseException(400, "Bad attribute definition for OS")
             try:
-                result = self.os_helper.create(path, param) # todo(jorgesece): parse out, code...
+                result = self.os_helper.create(path, param)
+                created.append(result[self.resource[:-1]])
             except Exception as e:
-                result = '{"Error":{"name":"%s", "details": "%s"}}' % (param['name'], e.message)
-            created.append(result)
-
-        return created
+                result = parsers.parse_controller_err(param['name'], e.message)
+                error_creation.append(result)
+        return created, error_creation
 
     # def show(self,  id, parameters=None):
     #     """Get network details
@@ -78,17 +79,20 @@ class ControllerResource(object):
         :param parameters:
         """
         deleted = []
+        deleted_err = []
         for param in parameters:
             try:
                 path = "/%s/%s" % (self.resource, param['id'])
                 result = self.os_helper.delete(path)
-                result = {'status': 'OK', 'id':param['id'], 'description': result}
+                result = parsers.parse_controller_delete("ok", param['id'], result)
+                deleted.append(result)
             except TypeError:
-                result = '{"status": "Error", "description": "Bad attribute definition for OS"}'
+                result = parsers.parse_controller_delete("ERROR", "Undefined", "Bad attribute definition for OS")
+                deleted_err.append(result)
             except Exception as e:
-                result = '{"status": "Error", "id":"%s", "description": "%s"}' % (param['id'], e.message)
-            deleted.append(result)
-        return deleted
+                result = parsers.parse_controller_delete("ERROR",param['id'], e.message)
+                deleted_err.append(result)
+        return deleted, deleted_err
 
 
 class ControllerClient(object):
@@ -101,7 +105,6 @@ class ControllerClient(object):
         return result
 
     def create(self, attributes, file, format ):
-        resulting_message = "CREATED:\n ["
         if file:
             parameters = file
         elif attributes:
@@ -109,25 +112,16 @@ class ControllerClient(object):
         else:
             # click.get_current_context.get_help()
             raise TypeError('You need to specify either --attributes or --file')
-
         result = self.control.create(parameters)
-        for item in result:
-            resulting_message = '%s%s\n' % (resulting_message, item)
-        resulting_message = '%s]' % resulting_message
-        return resulting_message
+        return result
 
     def delete(self, id, file, format):
-        resulting_message = "DELETED:\n ["
         if file:
             parameters = file
         elif id:
             parameters = [{"id":id}]
         else:
             raise TypeError('You need to specify either --id or --file')
-
         result = self.control.delete(parameters=parameters)
-        for item in result:
-            resulting_message = '%s%s\n' % (resulting_message, item)
-        resulting_message = '%s]' % resulting_message
 
-        return resulting_message
+        return result

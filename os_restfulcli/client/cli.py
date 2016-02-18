@@ -37,6 +37,7 @@ def project():
     """Manages users."""
 
 
+
 @project.command('list')
 def project_list():
     resource = 'projects'
@@ -58,13 +59,15 @@ def project_list():
 def project_create(attributes, file, content_format):
     """Creates a new project."""
     try:
-        client_controller = ControllerClient('projects')
-        result = client_controller.create(attributes, file, content_format)
+        resource = 'projects'
+        client_controller = ControllerClient(resource)
+        result,errors = client_controller.create(attributes, file, content_format)
     except TypeError as e:
         raise click.BadArgumentUsage(e.message)
     except Exception as e:
             raise click.ClickException(e.message)
-    click.echo(result)
+    client_utils.print_table(resource, result)
+    client_utils.print_table(resource, errors, 'FAIL')
 
 
 @project.command('delete',help="Select either --id or --file input")
@@ -81,13 +84,15 @@ def project_create(attributes, file, content_format):
 def project_delete(id, file, content_format):
     """Delelete."""
     try:
-        client_controller = ControllerClient('projects')
-        result = client_controller.delete(id, file, content_format)
+        resource = 'projects'
+        client_controller = ControllerClient(resource)
+        result,errors = client_controller.delete(id, file, content_format)
     except TypeError as e:
         raise click.BadArgumentUsage(e.message)
     except Exception as e:
         raise click.ClickException(e.message)
-    click.echo(result)
+    client_utils.print_table(resource, result)
+    client_utils.print_table(resource, errors, 'FAIL')
 
 
 @openstackcli.group()

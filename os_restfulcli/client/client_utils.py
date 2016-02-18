@@ -30,9 +30,16 @@ messages = { "empty": "No data found",
 elements_to_delete = ["links","parent_id"]
 elements_width = {'projects':{'domain_id':35,'name':20, 'id':35,'description':35}}
 
+colors = { 'FAIL' : '\033[91m',
+           'OK': '\033[92m',
+           'WARNING': '\033[93m',
+           'ENDC': '\033[0m'
+         }
+
+
 
 def get_table_headers(resource, json_data):
-    default_width = 10
+    default_width = 15
     headers_out = {}
     headers = json_data[0].keys()
     for del_it in elements_to_delete:
@@ -60,27 +67,36 @@ def get_table_headers(resource, json_data):
 #         fields.append(fields_row)
 #     return fields
 
-def print_table(resource, json_data):
+def print_table(resource, json_data, err=False):
     try:
-        headers_info = get_table_headers(resource, json_data)
-        #rows = get_table_rows(headers_info, json_data)
-
-        table_width = sum(headers_info.values())
-        print '{:-^{width}}'.format(' Results ',width=table_width)
-        for h,w in headers_info.iteritems():
-            print '{:<{width}} |'.format(h, width=w),
-        print
-        print '{:-^{width}}'.format('',width=table_width)
-
-        for row in json_data:
-            for h,w in headers_info.iteritems():
-                print '{:<{width}} |'.format(row[h], width=w),
+        if err:
+            message = colors['FAIL'] + ' ERROR ' + colors['ENDC']
+        else:
+            message = colors['OK'] + ' RESULTS ' + colors['ENDC']
+        if json_data:
+            headers_info = get_table_headers(resource, json_data)
+            table_width = sum(headers_info.values())
             print
-        # for row in rows:
-        #     for field, width in row.iteritems():
-        #         print '{0:{width}}'.format(field, width=width),
-        #     print
-        print '{:-^{width}}'.format('',width=table_width)
+            print
+            print '{:-^{width}}'.format(message,width=table_width + 10)
+            for h,w in headers_info.iteritems():
+                print '| {:<{width}}'.format(h, width=w),
+            print '|'
+            print '{:-^{width}}'.format('',width=table_width)
+
+            for row in json_data:
+                for h,w in headers_info.iteritems():
+                    print '| {:<{width}}'.format(row[h], width=w),
+                print'|'
+            print '{:-^{width}}'.format('',width=table_width)
+
+            # if json_errors:
+            #     print '{:-^{width}}'.format(colors['FAIL'] + ' ERRORS ',width=80)
+            #     for row in json_errors:
+            #         for field in row.keys():
+            #             print '{:<{width}} |'.format(row[field], width=40),
+            #         print
+            #     print '{:-^{width}}'.format('',width=table_width)
     except:
         print messages["empty"]
 

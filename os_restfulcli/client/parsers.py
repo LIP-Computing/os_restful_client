@@ -15,3 +15,13 @@
 # under the License.
 #
 
+import six
+
+
+def parse_controller_err(element, message):
+    return {"name":"%s" % element, "details": "%s" % message}
+
+
+def parse_controller_delete(result, element, message):
+    return {"status": result, "id": element, "description": message}
+
