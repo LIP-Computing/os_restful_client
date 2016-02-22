@@ -41,24 +41,24 @@ class TestIntegrationProjectCommand(os_restfulcli.tests.TestCaseCommandLine):
         configure_env(self.project_id)
 
     def test_project_list(self):
-        result = self.runner.invoke(cli.project, ['list'])
+        result = self.runner.invoke(cli.projects, ['list'])
         self.assertEqual(result.exit_code,0)
         self.assertIsNone(result.exception)
 
     def test_project_create_delete(self):
-        result = self.runner.invoke(cli.project, ['create', '--attributes={"name":"name53"}'])
+        result = self.runner.invoke(cli.projects, ['create', '--attributes={"name":"name53"}'])
         self.assertEqual(result.exit_code,0)
         self.assertIsNone(result.exception)
         #delete
         #id = str(result.output_bytes).strip().split("\n")[2].split("|")[5].strip()
         ids = parsers.json_load_from_client(result.output_bytes)
         for id in ids:
-            result_delete = self.runner.invoke(cli.project, ['delete', '--id=%s' % id])
+            result_delete = self.runner.invoke(cli.projects, ['delete', '--id=%s' % id])
             self.assertEqual(result_delete.exit_code,0)
             self.assertIsNone(result_delete.exception)
 
     def test_project_create_delete_bunch(self):
-        result = self.runner.invoke(cli.project, ['create', '--file=../json_file_example.json'])
+        result = self.runner.invoke(cli.projects, ['create', '--file=../json_file_example.json'])
         self.assertEqual(result.exit_code,0)
         self.assertIsNone(result.exception)
         #delete
@@ -66,17 +66,17 @@ class TestIntegrationProjectCommand(os_restfulcli.tests.TestCaseCommandLine):
         # var = "[{u'project': {u'description': u'', u'links': {u'self': u'http://localhost/v3/projects/e2b42b2aa5d5444f833b94d973571b63'}, u'enabled': True, u'id': u'e2b42b2aa5d5444f833b94d973571b63', u'parent_id': None, u'domain_id': u'default', u'name': u'name3'}}]"
         # result_dict = parsers.json_load_from_os_string(var)
         for id in ids:
-            result_delete = self.runner.invoke(cli.project, ['delete', '--id=%s' % id])
+            result_delete = self.runner.invoke(cli.projects, ['delete', '--id=%s' % id])
             self.assertEqual(result_delete.exit_code,0)
             self.assertIsNone(result_delete.exception)
 
     def test_project_delete_bunch(self):
-        result = self.runner.invoke(cli.project, ['delete', '--file=/home/jorge/Desktop/test_delete.txt', '--content_format=yaml'])
+        result = self.runner.invoke(cli.projects, ['delete', '--file=/home/jorge/Desktop/test_delete.txt', '--content_format=yaml'])
         self.assertEqual(result.exit_code,0)
         self.assertIsNone(result.exception)
 
     # def test_project_create_bunch_yaml_ok(self, m_create):
-    #     result = self.runner.invoke(cli.project, ['createBunch','yaml_file_example.yml','--content_format=yaml'])
+    #     result = self.runner.invoke(cli.projects, ['createBunch','yaml_file_example.yml','--content_format=yaml'])
     #     self.assertEqual(result.exit_code,0)
     #     self.assertIsNone(result.exception)
     #

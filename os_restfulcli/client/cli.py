@@ -33,20 +33,20 @@ def openstackcli():
 
 
 @openstackcli.group()
-def project():
+def projects():
     """Manages users."""
 
 
 
-@project.command('list')
-def project_list():
+@projects.command('list')
+def projects_list():
     resource = 'projects'
     project_controller = ControllerResource(resource)
     result = project_controller.index() # todo(jorgesece): parse result to json
     client_utils.print_table(resource, result)
 
 
-@project.command('create', help="Select either --attributes or --file input")
+@projects.command('create', help="Select either --attributes or --file input")
 @click.option('--attributes', '-a', default=None, type=click.STRING
               , callback=client_utils.validate_attributes
               , help='Project attributes: {"name":"name_project", "description":"description project",...}')
@@ -56,7 +56,7 @@ def project_list():
 @click.option('--content_format', '-cf',  default='json'
               , help='Format file.' , is_eager =True
               , type=click.Choice(['json', 'yaml']))
-def project_create(attributes, file, content_format):
+def projects_create(attributes, file, content_format):
     """Creates a new project."""
     try:
         resource = 'projects'
@@ -70,7 +70,7 @@ def project_create(attributes, file, content_format):
     client_utils.print_table(resource, errors, 'FAIL')
 
 
-@project.command('delete',help="Select either --id or --file input")
+@projects.command('delete',help="Select either --id or --file input")
 @click.option('--id', '-i', default=None
               , type = click.STRING
               , help='Identification of project')
@@ -81,7 +81,7 @@ def project_create(attributes, file, content_format):
 @click.option('--content_format', '-cf',  default='json'
               , help='Format file.', is_eager=True
               , type=click.Choice(['json', 'yaml']))
-def project_delete(id, file, content_format):
+def projects_delete(id, file, content_format):
     """Delelete."""
     try:
         resource = 'projects'
@@ -100,7 +100,7 @@ def users():
     """Manages users."""
 
 @users.command('list')
-def project_list():
+def users_list():
     project_controller = ControllerResource('users')
     result = project_controller.index()
     click.echo(result)
