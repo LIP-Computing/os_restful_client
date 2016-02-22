@@ -41,6 +41,14 @@ class TestCommandProject(os_restfulcli.tests.TestCaseCommandLine):
         self.assertEqual(result.exit_code,0)
         self.assertIsNone(result.exception)
 
+    @mock.patch.object(controller.ControllerClient, "__new__")
+    @mock.patch.object(controller.ControllerClient, "show")
+    def test_project_show(self, m_new, m_show):
+        result = self.runner.invoke(cli.projects, ['show'])
+        self.assertEqual(result.exit_code,0)
+        self.assertIsNone(result.exception)
+
+
     @mock.patch.object(controller.ControllerResource, "__new__")
     @mock.patch.object(controller.ControllerResource, "create")
     def test_project_create_no_param(self, m_new, m_create):

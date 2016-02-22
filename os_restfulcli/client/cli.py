@@ -46,6 +46,23 @@ def projects_list():
     client_utils.print_table(resource, result)
 
 
+@projects.command('show',help="Select either --id or --file input")
+@click.option('--id', '-i', default=None
+              , type = click.STRING
+              , help='Identification of project')
+def projects_show(id):
+    """Show."""
+    try:
+        resource = 'projects'
+        client_controller = ControllerClient(resource)
+        result = client_controller.show(id)
+    except TypeError as e:
+        raise click.BadArgumentUsage(e.message)
+    except Exception as e:
+        raise click.ClickException(e.message)
+    client_utils.print_table(resource, result)
+
+
 @projects.command('create', help="Select either --attributes or --file input")
 @click.option('--attributes', '-a', default=None, type=click.STRING
               , callback=client_utils.validate_attributes

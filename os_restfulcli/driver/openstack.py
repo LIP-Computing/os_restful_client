@@ -141,24 +141,14 @@ class OpenStackDriver(object):
         json_response = self.get_from_response(response, {})
         return json_response
 
-    # def get_network(self, req, id):
-    #     """Get info from a network. It returns json code from the server
-    #     :param req: the incoming network
-    #     :param id: net identification
-    #     """
-    #     path = "/networks/%s" % id
-    #     req = self._make_get_request(req, path)
-    #     response = req.get_response(self.app)
-    #     net = self.get_from_response(response, "network", {})
-    #     # subnet
-    #     if net["subnets"]:
-    #         path = "/subnets/%s" % net["subnets"][0]
-    #         req_subnet = self._make_get_request(req, path)
-    #         response_subnet = req_subnet.get_response(self.app)
-    #         net["subnet_info"] = self.get_from_response(response_subnet, "subnet", {})
-    #
-    #     net["status"] = parsers.network_status(net["status"]);
-    #     return net
+    def show(self, path):
+        """Get info from a resource. It returns json code from the server
+        :param path: the incoming request
+        """
+        req = self._make_get_request(path)
+        response = req.get_response(None)
+        json_response = self.get_from_response(response, {})
+        return json_response
     #
     # def get_subnet(self, req, id):
     #     """Get information from a subnet.

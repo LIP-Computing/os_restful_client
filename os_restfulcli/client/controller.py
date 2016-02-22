@@ -64,16 +64,19 @@ class ControllerResource(object):
                 error_creation.append(result)
         return created, error_creation
 
-    # def show(self,  id, parameters=None):
-    #     """Get network details
-    #     :param req: request object
-    #     :param id: network identification
-    #     :param parameters: request parameters
-    #     """
-    #     resp = self.os_helper.get_network(req, id)
-    #     occi_network_resources = self._get_network_resources([resp])
-    #     return occi_network_resources[0]
-    #
+    def show(self, id):
+        """Get network details
+        :param id: identificator
+        """
+        try:
+            path = "/%s/%s" % (self.resource, id)
+            result = self.os_helper.show(path)
+        except TypeError:
+            result = parsers.parse_controller_err("Undefined", "Bad attribute definition for OS")
+        except Exception as e:
+            result = parsers.parsers.parse_controller_err(id, e.message)
+        return [result[self.resource[:-1]]]
+
     def delete(self, parameters):
         """delete networks which satisfy the parameters
         :param parameters:
@@ -102,6 +105,11 @@ class ControllerClient(object):
 
     def index(self):
         result = self.control.index()
+        return result
+
+    def show(self, id):
+        parameters = {"id":id}
+        result = self.control.show(parameters=parameters)
         return result
 
     def create(self, attributes, file, format ):
