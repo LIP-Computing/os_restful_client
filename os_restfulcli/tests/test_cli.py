@@ -134,41 +134,33 @@ class TestCommandProject(os_restfulcli.tests.TestCaseCommandLine):
         self.assertEqual(result.exit_code,0)
         self.assertIsNone(result.exception)
 
-    @mock.patch.object(controller.ControllerResource, "__new__")
-    @mock.patch.object(controller.ControllerResource, "delete")
-    def test_project_delete_bunch(self, m_delete, m_new):
-        m_new.return_value.delete.return_value = (2,3)
-        result = self.runner.invoke(cli.projects, ['delete'])
-        self.assertEqual(result.exit_code,2)
-        self.assertIsNotNone(result.exception)
 
 
-
-class TestCommandUser(os_restfulcli.tests.TestCaseCommandLine):# todo(create as mock)
+class TestCommandUser(os_restfulcli.tests.TestCaseCommandLine):
 
     def setUp(self):
-        super(TestCommandProject, self).setUp()
+        super(TestCommandUser, self).setUp()
 
     def test_no_exist(self):
         result = self.runner.invoke(cli.users, ['Noexist'])
         self.assertEqual(result.exit_code,2)
         self.assertIsNotNone(result.exception)
 
-    def test_project(self):
+    def test_user(self):
         result = self.runner.invoke(cli.users)
         self.assertEqual(result.exit_code,0)
         self.assertIsNone(result.exception)
 
-    @mock.patch.object(controller.ControllerResource, "__new__")
-    @mock.patch.object(controller.ControllerResource, "index")
-    def test_project_list(self, m_new, m_index):
+    @mock.patch.object(controller.ControllerClient, "__new__")
+    @mock.patch.object(controller.ControllerClient, "index")
+    def test_user_list(self, m_new, m_index):
         result = self.runner.invoke(cli.users, ['list'])
         self.assertEqual(result.exit_code,0)
         self.assertIsNone(result.exception)
 
     @mock.patch.object(controller.ControllerClient, "__new__")
     @mock.patch.object(controller.ControllerClient, "show")
-    def test_project_show(self, m_new, m_show):
+    def test_user_show(self, m_new, m_show):
         result = self.runner.invoke(cli.users, ['show'])
         self.assertEqual(result.exit_code,0)
         self.assertIsNone(result.exception)
@@ -176,16 +168,39 @@ class TestCommandUser(os_restfulcli.tests.TestCaseCommandLine):# todo(create as 
 
     @mock.patch.object(controller.ControllerResource, "__new__")
     @mock.patch.object(controller.ControllerResource, "create")
-    def test_project_create_no_param(self, m_new, m_create):
+    def test_user_create_no_param(self, m_new, m_create):
         result = self.runner.invoke(cli.users, ['create'])
         self.assertEqual(result.exit_code, 2)
         self.assertIsNotNone(result.exception)
 
     @mock.patch.object(controller.ControllerClient, "__new__")
     @mock.patch.object(controller.ControllerClient, "create")
-    def test_project_create(self, m_create, m_new):
+    def test_user_create(self, m_create, m_new):
         m_new.return_value.create.return_value = (2,3)
-        result = self.runner.invoke(cli.users, ['create', '--attributes={"name":"name1","definition":"una definition"}'])
+        result = self.runner.invoke(cli.users, ['create', '--attributes={"name":"name1","email":"una definition"}'])
+        self.assertEqual(result.exit_code,0)
+        self.assertIsNone(result.exception)
+
+    @mock.patch.object(controller.ControllerResource, "__new__")
+    @mock.patch.object(controller.ControllerResource, "create")
+    def test_user_create_bunch_json_ok(self, m_create, m_new):
+        m_new.return_value.create.return_value = (2,3)
+        result = self.runner.invoke(cli.users, ['create', '--file=user_json_file_example.json', '--content_format=json'])
+        self.assertEqual(result.exit_code,0)
+        self.assertIsNone(result.exception)
+
+    @mock.patch.object(controller.ControllerResource, "__new__")
+    @mock.patch.object(controller.ControllerResource, "delete")
+    def test_user_delete(self, m_delete, m_new):
+        m_new.return_value.delete.return_value = (2,3)
+        result = self.runner.invoke(cli.users, ['delete', '--id=89434'])
+        self.assertEqual(result.exit_code,0)
+        self.assertIsNone(result.exception)
+    @mock.patch.object(controller.ControllerResource, "__new__")
+    @mock.patch.object(controller.ControllerResource, "delete")
+    def test_user_delete_bunch(self, m_delete, m_new):
+        m_new.return_value.delete.return_value = (2,3)
+        result = self.runner.invoke(cli.users, ['delete', '--file=user_json_file_example.json', '--content_format=json'])
         self.assertEqual(result.exit_code,0)
         self.assertIsNone(result.exception)
 
