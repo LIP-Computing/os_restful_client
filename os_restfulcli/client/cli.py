@@ -15,14 +15,13 @@
 # under the License.
 
 import sys
-
 import click
 
 from os_restfulcli.client import client_utils
-from os_restfulcli.client.controller import ControllerResource
 from os_restfulcli.client.controller import ControllerClient
 
-#sys.tracebacklimit=0
+sys.tracebacklimit=0
+
 
 @click.group()
 @click.version_option()
@@ -33,35 +32,27 @@ def openstackcli():
 
 
 @openstackcli.group()
-def projects():
+@click.pass_context
+def projects(ctx):
     """Manages users."""
-
+    resource = 'projects'
+    ctx.obj = ControllerClient(resource)
 
 
 @projects.command('list')
-def projects_list():
-    resource = 'projects'
-    project_controller = ControllerResource(resource)
-    result = project_controller.index() # todo(jorgesece): parse result to json
-    client_utils.print_table(resource, result)
+@click.pass_context
+def projects_list(ctx):
+    ctx.obj.index()
 
 
-@projects.command('show',help="Select either --id or --file input")
+@projects.command('show',help="Select either --id")
 @click.option('--id', '-i', default=None
               , type = click.STRING
               , help='Identification of project')
-def projects_show(id):
+@click.pass_context
+def projects_show(ctx, id):
     """Show."""
-    try:
-        resource = 'projects'
-        client_controller = ControllerClient(resource)
-        result,errors = client_controller.show(id)
-    except TypeError as e:
-        raise click.BadArgumentUsage(e.message)
-    except Exception as e:
-        raise click.ClickException(e.message)
-    client_utils.print_table(resource, result)
-    client_utils.print_table(resource, errors, 'FAIL')
+    ctx.obj.show(id)
 
 
 @projects.command('create', help="Select either --attributes or --file input")
@@ -74,18 +65,10 @@ def projects_show(id):
 @click.option('--content_format', '-cf',  default='json'
               , help='Format file.' , is_eager =True
               , type=click.Choice(['json', 'yaml']))
-def projects_create(attributes, file, content_format):
+@click.pass_context
+def projects_create(ctx, attributes, file, content_format):
     """Creates a new project."""
-    try:
-        resource = 'projects'
-        client_controller = ControllerClient(resource)
-        result, errors = client_controller.create(attributes, file, content_format)
-    except TypeError as e:
-        raise click.BadArgumentUsage(e.message)
-    except Exception as e:
-            raise click.ClickException(e.message)
-    client_utils.print_table(resource, result)
-    client_utils.print_table(resource, errors, 'FAIL')
+    ctx.obj.create(attributes, file, content_format)
 
 
 @projects.command('delete',help="Select either --id or --file input")
@@ -99,50 +82,51 @@ def projects_create(attributes, file, content_format):
 @click.option('--content_format', '-cf',  default='json'
               , help='Format file.', is_eager=True
               , type=click.Choice(['json', 'yaml']))
-def projects_delete(id, file, content_format):
-    """Delelete."""
-    try:
-        resource = 'projects'
-        client_controller = ControllerClient(resource)
-        result,errors = client_controller.delete(id, file, content_format)
-    except TypeError as e:
-        raise click.BadArgumentUsage(e.message)
-    except Exception as e:
-        raise click.ClickException(e.message)
-    client_utils.print_table(resource, result)
-    client_utils.print_table(resource, errors, 'FAIL')
+@click.pass_context
+def projects_delete(ctx, id, file, content_format):
+    """Delete."""
+    ctx.obj.delete(id, file, content_format)
+
 
 
 @openstackcli.group()
-def users():
+@click.pass_context
+def users(ctx):
     """Manages users."""
+    resource = 'users'
+    ctx.obj = ControllerClient(resource)
+
 
 @users.command('list')
-def users_list():
-    project_controller = ControllerResource('users')
-    result = project_controller.index()
-    click.echo(result)
+@click.pass_context
+def users_list(ctx):
+    ctx.obj.index()
+
+
+@users.command('show',help="Select either --id")
+@click.option('--id', '-i', default=None
+              , type = click.STRING
+              , help='Identification of project')
+@click.pass_context
+def users_show(ctx, id):
+    """Show."""
+    ctx.obj.show(id)
+
 
 @users.command('create', help="Select either --attributes or --file input")
 @click.option('--attributes', '-a', default=None, type=click.STRING
               , callback=client_utils.validate_attributes
-              , help='Project attributes: {"name":"name_project", "description":"description project",...}')
+              , help='Project attributes: {"name":"name_user", "description":"user description ",...}')
 @click.option('--file', '-f', default=None, type=click.File('r')
               , help='File with list of projects attributes'
               , callback=client_utils.validate_file_attributes)
 @click.option('--content_format', '-cf',  default='json'
               , help='Format file.' , is_eager =True
               , type=click.Choice(['json', 'yaml']))
-def users_create(attributes, file, content_format):
+@click.pass_context
+def users_create(ctx, attributes, file, content_format):
     """Creates a new project."""
-    try:
-        client_controller = ControllerClient('users')
-        result = client_controller.create(attributes, file, content_format)
-    except TypeError as e:
-        raise click.BadArgumentUsage(e.message)
-    except Exception as e:
-            raise click.ClickException(e.message)
-    click.echo(result)
+    ctx.obj.create(attributes, file, content_format)
 
 
 @users.command('delete',help="Select either --id or --file input")
@@ -150,20 +134,15 @@ def users_create(attributes, file, content_format):
               , type = click.STRING
               , help='Identification of project')
 @click.option('--file', '-f', default=None,
-              help='File with list of projects ids. [{"id"="xx"},{"id"="xx2"}..]',
+              help='File with list of useres ids. [{"id"="xx"},{"id"="xx2"}..]',
               type=click.File('r')
               , callback=client_utils.validate_file_attributes)
 @click.option('--content_format', '-cf',  default='json'
               , help='Format file.', is_eager=True
               , type=click.Choice(['json', 'yaml']))
-def users_delete(id, file, content_format):
+@click.pass_context
+def users_delete(ctx, id, file, content_format):
     """Delelete."""
-    try:
-        client_controller = ControllerClient('users')
-        result = client_controller.delete(id, file, content_format)
-    except TypeError as e:
-        raise click.BadArgumentUsage(e.message)
-    except Exception as e:
-        raise click.ClickException(e.message)
-    click.echo(result)
+    ctx.obj.delete(id, file, content_format)
+
 

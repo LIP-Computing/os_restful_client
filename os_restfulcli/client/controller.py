@@ -13,13 +13,13 @@
 # WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 # License for the specific language governing permissions and limitations
 # under the License.
+import click
 
 
 from os_restfulcli.exceptions import ParseException
 from os_restfulcli.driver.openstack import OpenStackDriver
 
 from os_restfulcli.client import client_utils, parsers
-
 
 
 class ControllerResource(object):
@@ -92,7 +92,7 @@ class ControllerResource(object):
             try:
                 path = "/%s/%s" % (self.resource, param['id'])
                 result = self.os_helper.delete(path)
-                result = parsers.parse_controller_delete("ok", param['id'], result)
+                result = parsers.parse_controller_delete("statisfully deleted", param['id'], result)
                 deleted.append(result)
             except TypeError:
                 result = parsers.parse_controller_delete("ERROR", "Undefined", "Bad attribute definition for OS")
@@ -106,34 +106,58 @@ class ControllerResource(object):
 class ControllerClient(object):
 
     def __init__(self, resource):
-        self.control = ControllerResource(resource)
+        try:
+            self.resource = resource
+            self.control = ControllerResource(resource)
+        except Exception as e:
+            raise click.ClickException(e.message)
 
     def index(self):
-        result = self.control.index()
-        return result
+        try:
+            result = self.control.index()
+            client_utils.print_table(self.resource, result)
+        except Exception as e:
+            raise click.ClickException(e.message)
 
     def show(self, id):
-        result = self.control.show(id)
-        return result
+        try:
+            result, errors = self.control.show(id)
+            client_utils.print_table(self.resource, result)
+            client_utils.print_table(self.resource, errors, 'FAIL')
+        except TypeError as e:
+            raise click.BadArgumentUsage(e.message)
+        except Exception as e:
+            raise click.ClickException(e.message)
 
     def create(self, attributes, file, format ):
-        if file:
-            parameters = file
-        elif attributes:
-            parameters = [attributes]
-        else:
-            # click.get_current_context.get_help()
-            raise TypeError('You need to specify either --attributes or --file')
-        result = self.control.create(parameters)
-        return result
+        try:
+            if file:
+                parameters = file
+            elif attributes:
+                parameters = [attributes]
+            else:
+                # click.get_current_context.get_help()
+                raise TypeError('You need to specify either --attributes or --file')
+            result, errors = self.control.create(parameters)
+            client_utils.print_table(self.resource, result)
+            client_utils.print_table(self.resource, errors, 'FAIL')
+        except TypeError as e:
+            raise click.BadArgumentUsage(e.message)
+        except Exception as e:
+                raise click.ClickException(e.message)
 
     def delete(self, id, file, format):
-        if file:
-            parameters = file
-        elif id:
-            parameters = [{"id":id}]
-        else:
-            raise TypeError('You need to specify either --id or --file')
-        result = self.control.delete(parameters=parameters)
-
-        return result
+        try:
+            if file:
+                parameters = file
+            elif id:
+                parameters = [{"id":id}]
+            else:
+                raise TypeError('You need to specify either --id or --file')
+            result, errors =  self.control.delete(parameters=parameters)
+            client_utils.print_table(self.resource, result)
+            client_utils.print_table(self.resource, errors, 'FAIL')
+        except TypeError as e:
+            raise click.BadArgumentUsage(e.message)
+        except Exception as e:
+            raise click.ClickException(e.message)

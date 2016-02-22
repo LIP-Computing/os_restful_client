@@ -147,35 +147,45 @@ class TestCommandProject(os_restfulcli.tests.TestCaseCommandLine):
 class TestCommandUser(os_restfulcli.tests.TestCaseCommandLine):# todo(create as mock)
 
     def setUp(self):
-        super(TestCommandUser, self).setUp()
+        super(TestCommandProject, self).setUp()
 
     def test_no_exist(self):
-        result = self.runner.invoke(cli.user, ['Noexist'])
+        result = self.runner.invoke(cli.users, ['Noexist'])
         self.assertEqual(result.exit_code,2)
         self.assertIsNotNone(result.exception)
 
-    def test_user(self):
-        result = self.runner.invoke(cli.user)
+    def test_project(self):
+        result = self.runner.invoke(cli.users)
         self.assertEqual(result.exit_code,0)
         self.assertIsNone(result.exception)
 
-    def test_user_create(self):
-        result = self.runner.invoke(cli.user, ['create', 'name1'])
+    @mock.patch.object(controller.ControllerResource, "__new__")
+    @mock.patch.object(controller.ControllerResource, "index")
+    def test_project_list(self, m_new, m_index):
+        result = self.runner.invoke(cli.users, ['list'])
         self.assertEqual(result.exit_code,0)
         self.assertIsNone(result.exception)
 
-    def test_user_create_error_arg(self):
-        result = self.runner.invoke(cli.user, ['create', 'name1', 'erroArg'])
-        self.assertEqual(result.exit_code,2)
+    @mock.patch.object(controller.ControllerClient, "__new__")
+    @mock.patch.object(controller.ControllerClient, "show")
+    def test_project_show(self, m_new, m_show):
+        result = self.runner.invoke(cli.users, ['show'])
+        self.assertEqual(result.exit_code,0)
+        self.assertIsNone(result.exception)
+
+
+    @mock.patch.object(controller.ControllerResource, "__new__")
+    @mock.patch.object(controller.ControllerResource, "create")
+    def test_project_create_no_param(self, m_new, m_create):
+        result = self.runner.invoke(cli.users, ['create'])
+        self.assertEqual(result.exit_code, 2)
         self.assertIsNotNone(result.exception)
 
-    def test_user_create_optional_arg(self):
-        result = self.runner.invoke(cli.user, ['create', 'name', '--description=description'])
-        self.assertEqual(result.exit_code,0)
-        self.assertIsNone(result.exception)
-
-    def test_user_create_bunch(self):
-        result = self.runner.invoke(cli.user, ['createBunch', 'file'])
+    @mock.patch.object(controller.ControllerClient, "__new__")
+    @mock.patch.object(controller.ControllerClient, "create")
+    def test_project_create(self, m_create, m_new):
+        m_new.return_value.create.return_value = (2,3)
+        result = self.runner.invoke(cli.users, ['create', '--attributes={"name":"name1","definition":"una definition"}'])
         self.assertEqual(result.exit_code,0)
         self.assertIsNone(result.exception)
 

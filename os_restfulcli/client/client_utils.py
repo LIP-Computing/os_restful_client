@@ -158,7 +158,7 @@ def validate_attributes(ctx, param, value):
         dic_value = json.loads(value)
         return dic_value
     except ValueError:
-        raise click.BadParameter('{"name":"name_project", "description":"description project",...}')
+        raise click.BadParameter('\'{"name":"name_resource", "description":"description sentence",...}\' ')
 
 
 def validate_file_attributes(ctx, param, value):
