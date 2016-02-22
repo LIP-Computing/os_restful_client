@@ -45,6 +45,13 @@ class TestIntegrationProjectCommand(os_restfulcli.tests.TestCaseCommandLine):
         self.assertEqual(result.exit_code,0)
         self.assertIsNone(result.exception)
 
+
+    def test_project_show(self):
+        result = self.runner.invoke(cli.projects, ['show', '--id=%s' % self.project_id])
+        self.assertEqual(result.exit_code,0)
+        self.assertIsNone(result.exception)
+
+
     def test_project_create_delete(self):
         result = self.runner.invoke(cli.projects, ['create', '--attributes={"name":"name53"}'])
         self.assertEqual(result.exit_code,0)

@@ -108,8 +108,7 @@ class ControllerClient(object):
         return result
 
     def show(self, id):
-        parameters = {"id":id}
-        result = self.control.show(parameters=parameters)
+        result = self.control.show(id)
         return result
 
     def create(self, attributes, file, format ):
