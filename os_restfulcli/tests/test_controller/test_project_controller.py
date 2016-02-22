@@ -32,6 +32,7 @@ class TestCaseAPIController(testtools.TestCase):
         os.environ.data['OS_TOKEN'] = 'token'
         self.controller = ControllerResource(mock.MagicMock())
 
+
     @mock.patch.object(OpenStackDriver, "index")
     def test_index(self, m_index):
         result = self.controller.index(None)

@@ -22,7 +22,7 @@ from os_restfulcli.client import client_utils
 from os_restfulcli.client.controller import ControllerResource
 from os_restfulcli.client.controller import ControllerClient
 
-sys.tracebacklimit=0
+#sys.tracebacklimit=0
 
 @click.group()
 @click.version_option()
@@ -61,7 +61,7 @@ def project_create(attributes, file, content_format):
     try:
         resource = 'projects'
         client_controller = ControllerClient(resource)
-        result,errors = client_controller.create(attributes, file, content_format)
+        result, errors = client_controller.create(attributes, file, content_format)
     except TypeError as e:
         raise click.BadArgumentUsage(e.message)
     except Exception as e:
