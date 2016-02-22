@@ -68,14 +68,19 @@ class ControllerResource(object):
         """Get network details
         :param id: identificator
         """
+        showed = []
+        showed_err = []
         try:
             path = "/%s/%s" % (self.resource, id)
             result = self.os_helper.show(path)
+            showed.append(result[self.resource[:-1]])
         except TypeError:
             result = parsers.parse_controller_err("Undefined", "Bad attribute definition for OS")
+            showed_err.append(result)
         except Exception as e:
-            result = parsers.parsers.parse_controller_err(id, e.message)
-        return [result[self.resource[:-1]]]
+            result = parsers.parse_controller_err(id, e.message)
+            showed_err.append(result)
+        return showed, showed_err
 
     def delete(self, parameters):
         """delete networks which satisfy the parameters

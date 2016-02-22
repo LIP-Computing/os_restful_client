@@ -55,12 +55,13 @@ def projects_show(id):
     try:
         resource = 'projects'
         client_controller = ControllerClient(resource)
-        result = client_controller.show(id)
+        result,errors = client_controller.show(id)
     except TypeError as e:
         raise click.BadArgumentUsage(e.message)
     except Exception as e:
         raise click.ClickException(e.message)
     client_utils.print_table(resource, result)
+    client_utils.print_table(resource, errors, 'FAIL')
 
 
 @projects.command('create', help="Select either --attributes or --file input")
