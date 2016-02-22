@@ -18,6 +18,7 @@ import click
 import json
 import yaml
 import os
+from tabulate import tabulate
 
 auth_variables = ['OS_AUTH_URL',
                   'OS_TOKEN',
@@ -27,7 +28,7 @@ auth_variables = ['OS_AUTH_URL',
 messages = { "empty": "No data found",
             "error": "There was an error"
           }
-elements_to_delete = ["links","parent_id"]
+elements_to_delete = ["links","parent_id","id"]
 elements_width = {'projects':{'domain_id':35,'name':20, 'id':35,'description':35}}
 
 colors = { 'FAIL' : '\033[91m',
@@ -42,21 +43,27 @@ def get_table_headers(resource, json_data):
     default_width = 15
     headers_out = {}
     headers = json_data[0].keys()
-    for del_it in elements_to_delete:
-        if del_it in headers:
-            headers.remove(del_it)
+    headers.sort(reverse=True)
+    out_header = ["id"]
     for h in headers:
-        # f_with = str(json_data[0][h]).__len__()
-        # if f_with < h.__len__():
-        #     f_with = h.__len__()
-        # headers_out[h] = f_with + min_width
-        if h in elements_width['projects']:
-            headers_out[h] = elements_width[resource][h]
-        else:
-            headers_out[h] = default_width
-    return headers_out
+        if h not in elements_to_delete:
+            out_header.append(h)
+    # for del_it in elements_to_delete:
+    #     if del_it not in headers:
+    #         headers.remove(del_it)
+    # for h in headers:
+    #     # f_with = str(json_data[0][h]).__len__()
+    #     # if f_with < h.__len__():
+    #     #     f_with = h.__len__()
+    #     # headers_out[h] = f_with + min_width
+    #     if h in elements_width['projects']:
+    #         headers_out[h] = elements_width[resource][h]
+    #     else:
+    #         headers_out[h] = default_width
 
+    return out_header
 
+#
 # def get_table_rows(headers, json_data):
 #     fields = []
 #     for row in json_data:
@@ -67,7 +74,19 @@ def get_table_headers(resource, json_data):
 #         fields.append(fields_row)
 #     return fields
 
-def print_table(resource, json_data, err=False):
+
+def get_table_rows(headers, json_data):
+    fields = []
+    for row in json_data:
+        fields_row = []
+        for key in headers:
+            if key in row:
+                fields_row.append(str(row[key]))
+        fields.append(fields_row)
+    return fields
+
+
+def print_table1(resource, json_data, err=False):
     try:
         if err:
             message = colors['FAIL'] + ' ERROR ' + colors['ENDC']
@@ -97,6 +116,22 @@ def print_table(resource, json_data, err=False):
             #             print '{:<{width}} |'.format(row[field], width=40),
             #         print
             #     print '{:-^{width}}'.format('',width=table_width)
+    except:
+        print messages["empty"]
+
+
+def print_table(resource, json_data, err=False):
+    try:
+        if err:
+            message = colors['FAIL'] + ' ERROR ' + colors['ENDC']
+        else:
+            message = colors['OK'] + ' RESULTS ' + colors['ENDC']
+        if json_data:
+            print
+            print '{:-^{width}}'.format(message,width=80)
+            headers = get_table_headers(resource, json_data)
+            rows = get_table_rows(headers,json_data)
+            print tabulate(rows, headers=headers, tablefmt="orgtbl")
     except:
         print messages["empty"]
 

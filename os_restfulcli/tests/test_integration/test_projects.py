@@ -50,11 +50,9 @@ class TestIntegrationProjectCommand(os_restfulcli.tests.TestCaseCommandLine):
         self.assertEqual(result.exit_code,0)
         self.assertIsNone(result.exception)
         #delete
-        result_dict = parsers.json_load_from_client(result.output_bytes)
-        # var = "[{u'project': {u'description': u'', u'links': {u'self': u'http://localhost/v3/projects/e2b42b2aa5d5444f833b94d973571b63'}, u'enabled': True, u'id': u'7f4062b4ee104705a4c553e820e3ffb8', u'parent_id': None, u'domain_id': u'default', u'name': u'name3'}}]"
-        # result_dict = parsers.json_load_from_client(var)
-        for item in result_dict:
-            id = item['project']['id']
+        #id = str(result.output_bytes).strip().split("\n")[2].split("|")[5].strip()
+        ids = parsers.json_load_from_client(result.output_bytes)
+        for id in ids:
             result_delete = self.runner.invoke(cli.project, ['delete', '--id=%s' % id])
             self.assertEqual(result_delete.exit_code,0)
             self.assertIsNone(result_delete.exception)
@@ -64,11 +62,10 @@ class TestIntegrationProjectCommand(os_restfulcli.tests.TestCaseCommandLine):
         self.assertEqual(result.exit_code,0)
         self.assertIsNone(result.exception)
         #delete
-        result_dict = parsers.json_load_from_client(result.output_bytes)
+        ids = parsers.json_load_from_client(result.output_bytes)
         # var = "[{u'project': {u'description': u'', u'links': {u'self': u'http://localhost/v3/projects/e2b42b2aa5d5444f833b94d973571b63'}, u'enabled': True, u'id': u'e2b42b2aa5d5444f833b94d973571b63', u'parent_id': None, u'domain_id': u'default', u'name': u'name3'}}]"
         # result_dict = parsers.json_load_from_os_string(var)
-        for item in result_dict:
-            id = item['project']['id']
+        for id in ids:
             result_delete = self.runner.invoke(cli.project, ['delete', '--id=%s' % id])
             self.assertEqual(result_delete.exit_code,0)
             self.assertIsNone(result_delete.exception)
@@ -110,14 +107,16 @@ class TestIntegrationProjectController(testtools.TestCase):
         parameter = [{'name':'project_test4', 'description':' integration project test'}]
         result = self.controller.create(parameter)
         self.assertIsNotNone(result)
-        self.assertIsInstance(result, list)
-        self.assertEqual(result.__len__(), parameter.__len__())
+        self.assertIsNotNone(result[0])
+        result_OK = result[0]
+        self.assertIsInstance(result_OK, list)
+        self.assertEqual(result_OK.__len__(), parameter.__len__())
         list2 = self.controller.index()
-        self.assertEqual(list1['projects'].__len__() + parameter.__len__(), list2['projects'].__len__())
+        self.assertEqual(list1.__len__() + parameter.__len__(), list2.__len__())
         #delete
-        self.controller.delete([{'id':result[0]['project']['id']}])
+        self.controller.delete([{'id':result_OK[0]['id']}])
         list3 = self.controller.index()
-        self.assertEqual(list1['projects'].__len__(), list3['projects'].__len__())
+        self.assertEqual(list1.__len__(), list3.__len__())
 
     def test_bunch_create_delete(self):
         list1 = self.controller.index()
@@ -126,17 +125,19 @@ class TestIntegrationProjectController(testtools.TestCase):
                      ]
         result = self.controller.create(parameter)
         self.assertIsNotNone(result)
-        self.assertIsInstance(result, list)
-        self.assertEqual(result.__len__(), parameter.__len__())
+        self.assertIsNotNone(result[0])
+        result_OK = result[0]
+        self.assertIsInstance(result_OK, list)
+        self.assertEqual(result_OK.__len__(), parameter.__len__())
         list2 = self.controller.index()
-        self.assertEqual(list1['projects'].__len__() + parameter.__len__(), list2['projects'].__len__())
+        self.assertEqual(list1.__len__() + parameter.__len__(), list2.__len__())
         #delete
         param_delete = []
-        for item in result:
-            param_delete.append({'id':item['project']['id']})
+        for item in result_OK:
+            param_delete.append({'id':item['id']})
         self.controller.delete(param_delete)
         list3 = self.controller.index()
-        self.assertEqual(list1['projects'].__len__(), list3['projects'].__len__())
+        self.assertEqual(list1.__len__(), list3.__len__())
 
     def test_bunch_create_wrong_id(self):
         wrong_id= [{"id":"8903489034890234"}]

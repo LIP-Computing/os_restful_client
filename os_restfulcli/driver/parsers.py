@@ -19,6 +19,7 @@ import yaml
 import six
 import urlparse
 
+from os_restfulcli.exceptions import ParseException
 
 def make_body(resource, parameters):
         body = {resource:{}}
@@ -49,7 +50,7 @@ def translate_parameters(translation, parameters):
     return out
 
 
-def json_load_from_client(string_os):
+def json_load_from_client1(string_os):
     return json.loads(string_os.replace ("u\'", "\"")
                       .replace ("\'", "\"")
                       .replace("True","\"True\"")
@@ -58,6 +59,17 @@ def json_load_from_client(string_os):
                       .replace("}\n{", "},{")
                       .replace("\n", "")
                       )
+
+
+def json_load_from_client(string_cli):
+    cadena = str(string_cli).strip().split("\n")
+    ids = []
+    line = 3
+    while line < cadena.__len__():
+        ids.append(cadena[line].split("|")[1].strip())
+        line += 1
+    return ids
+
 
 def parse_file(fp, content_format):
     # try:
