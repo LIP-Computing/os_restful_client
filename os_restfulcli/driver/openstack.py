@@ -15,11 +15,9 @@
 # under the License.
 #
 import json
-
 import webob
-from os_restfulcli import exceptions
-from os_restfulcli.driver import parsers
 
+from os_restfulcli import exceptions
 from os_restfulcli.driver import parsers
 
 

@@ -1,3 +1,3 @@
 testtools>=0.9.34
 mock
-click
+python-keystoneclient

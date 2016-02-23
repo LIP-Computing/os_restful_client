@@ -20,8 +20,8 @@ import testtools
 import os_restfulcli.tests
 from os_restfulcli.client import cli
 from os_restfulcli.client.controller import ControllerResource
-from os_restfulcli.credentials.session import KeySession
 from os_restfulcli.driver import parsers
+from os_restfulcli.tests.credentials.session import KeySession
 
 
 def configure_env(project_id):

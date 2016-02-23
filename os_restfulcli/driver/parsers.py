@@ -132,3 +132,10 @@ def get_resource_from_path(str, delete_last):
     if delete_last:
         return out[:-1]
     return out
+
+def parse_controller_err(element, message):
+    return {"name":"%s" % element, "details": "%s" % message}
+
+
+def parse_controller_delete(result, element, message):
+    return {"status": result, "id": element, "description": message}

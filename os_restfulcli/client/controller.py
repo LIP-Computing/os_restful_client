@@ -19,7 +19,8 @@ import click
 from os_restfulcli.exceptions import ParseException
 from os_restfulcli.driver.openstack import OpenStackDriver
 
-from os_restfulcli.client import client_utils, parsers
+from os_restfulcli.client import client_utils
+from os_restfulcli.driver import parsers
 
 
 class ControllerResource(object):
