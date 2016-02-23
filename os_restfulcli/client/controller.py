@@ -24,6 +24,7 @@ from os_restfulcli.driver import parsers
 
 
 class ControllerResource(object):
+    # todo(jorgesece): one controller per resource or endpoint should be a parameter with flexible path
     resource = None
 
     def __init__(self, resource):
