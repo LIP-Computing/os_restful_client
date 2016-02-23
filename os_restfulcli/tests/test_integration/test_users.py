@@ -19,8 +19,12 @@ import os
 
 import testtools
 
+from os_restfulcli.client import cli
 from os_restfulcli.client.controller import ControllerResource
 from os_restfulcli.tests.credentials.session import KeySession
+from os_restfulcli.driver import parsers
+
+import os_restfulcli.tests
 
 
 def configure_env(project_id):
@@ -30,6 +34,53 @@ def configure_env(project_id):
     os.environ.data['OS_PORT'] = '5000'
     os.environ.data['OS_VERSION'] = 'v3'
     os.environ.data['OS_TOKEN'] = token
+
+
+class TestIntegrationProjectCommand(os_restfulcli.tests.TestCaseCommandLine):
+
+    def setUp(self):
+        super(TestIntegrationProjectCommand, self).setUp()
+        self.user_id = "89c3bc64dd4e4436a67342383fd07d4e"
+        self.project_id = "484d3a7eeb4f4462b329c1d0463cf324"
+        configure_env(self.project_id)
+
+    def test_user_list(self):
+        result = self.runner.invoke(cli.users, ['list'])
+        self.assertEqual(result.exit_code,0)
+        self.assertIsNone(result.exception)
+
+
+    def test_user_show(self):
+        result = self.runner.invoke(cli.users, ['show', self.user_id])
+        self.assertEqual(result.exit_code,0)
+        self.assertIsNone(result.exception)
+
+
+    def test_user_create_delete(self):
+        result = self.runner.invoke(cli.users, ['create', '--attributes={"name":"name53"}'])
+        self.assertEqual(result.exit_code,0)
+        self.assertIsNone(result.exception)
+        #delete
+        #id = str(result.output_bytes).strip().split("\n")[2].split("|")[5].strip()
+        ids = parsers.json_load_from_client(result.output_bytes)
+        for id in ids:
+            result_delete = self.runner.invoke(cli.users, ['delete', '--id=%s' % id])
+            self.assertEqual(result_delete.exit_code,0)
+            self.assertIsNone(result_delete.exception)
+
+    def test_user_create_delete_bunch(self):
+        result = self.runner.invoke(cli.users, ['create', '--file=../user_json_file_example.json'])
+        self.assertEqual(result.exit_code,0)
+        self.assertIsNone(result.exception)
+        #delete
+        ids = parsers.json_load_from_client(result.output_bytes)
+        # var = "[{u'project': {u'description': u'', u'links': {u'self': u'http://localhost/v3/projects/e2b42b2aa5d5444f833b94d973571b63'}, u'enabled': True, u'id': u'e2b42b2aa5d5444f833b94d973571b63', u'parent_id': None, u'domain_id': u'default', u'name': u'name3'}}]"
+        # result_dict = parsers.json_load_from_os_string(var)
+        for id in ids:
+            result_delete = self.runner.invoke(cli.users, ['delete', '--id=%s' % id])
+            self.assertEqual(result_delete.exit_code,0)
+            self.assertIsNone(result_delete.exception)
+
 
 class TestIntegrationUserController(testtools.TestCase):
 
