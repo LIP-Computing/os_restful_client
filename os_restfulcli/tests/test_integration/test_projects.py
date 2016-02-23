@@ -78,7 +78,7 @@ class TestIntegrationProjectCommand(os_restfulcli.tests.TestCaseCommandLine):
             self.assertIsNone(result_delete.exception)
 
     def test_project_delete_bunch(self):
-        result = self.runner.invoke(cli.projects, ['delete', '--file=/home/jorge/Desktop/test_delete.txt', '--content_format=yaml'])
+        result = self.runner.invoke(cli.projects, ['delete', '--file=../yaml_test_delete.txt', '--content_format=yaml'])
         self.assertEqual(result.exit_code,0)
         self.assertIsNone(result.exception)
 

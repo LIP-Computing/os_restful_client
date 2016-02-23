@@ -86,7 +86,7 @@ def print_table(resource, json_data, err=False):
             message = colors['OK'] + ' RESULTS ' + colors['ENDC']
         if json_data:
             print
-            print '{:-^{width}}'.format(message,width=60)
+            print '   =====> {:<} <====='.format(message)
             headers = get_table_headers(resource, json_data)
             rows = get_table_rows(headers,json_data)
             print tabulate(rows, headers=headers, tablefmt="orgtbl")
