@@ -40,19 +40,25 @@ def projects(ctx):
 
 
 @projects.command('list')
+@click.option('--out', '-o',  default='table'
+              , help='Out format.'
+              , type=click.Choice(['json', 'table']))
 @click.pass_context
-def projects_list(ctx):
-    ctx.obj.index()
+def projects_list(ctx, out):
+    ctx.obj.index(out)
 
 
 @projects.command('show',help="Select either --id")
 @click.option('--id', '-i', default=None
               , type = click.STRING
               , help='Identification of project')
+@click.option('--out', '-o',  default='table'
+              , help='Out format.'
+              , type=click.Choice(['json', 'table']))
 @click.pass_context
-def projects_show(ctx, id):
+def projects_show(ctx, id, out):
     """Show."""
-    ctx.obj.show(id)
+    ctx.obj.show(id, out)
 
 
 @projects.command('create', help="Select either --attributes or --file input")
@@ -65,10 +71,13 @@ def projects_show(ctx, id):
 @click.option('--content_format', '-cf',  default='json'
               , help='Format file.' , is_eager =True
               , type=click.Choice(['json', 'yaml']))
+@click.option('--out', '-o',  default='table'
+              , help='Out format.'
+              , type=click.Choice(['json', 'table']))
 @click.pass_context
-def projects_create(ctx, attributes, file, content_format):
+def projects_create(ctx, attributes, file, content_format, out):
     """Creates a new project."""
-    ctx.obj.create(attributes, file, content_format)
+    ctx.obj.create(attributes, file, out)
 
 
 @projects.command('delete',help="Select either --id or --file input")
@@ -82,10 +91,13 @@ def projects_create(ctx, attributes, file, content_format):
 @click.option('--content_format', '-cf',  default='json'
               , help='Format file.', is_eager=True
               , type=click.Choice(['json', 'yaml']))
+@click.option('--out', '-o',  default='table'
+              , help='Out format.'
+              , type=click.Choice(['json', 'table']))
 @click.pass_context
-def projects_delete(ctx, id, file, content_format):
+def projects_delete(ctx, id, file, content_format, out):
     """Delete."""
-    ctx.obj.delete(id, file, content_format)
+    ctx.obj.delete(id, file, out)
 
 
 
@@ -98,19 +110,25 @@ def users(ctx):
 
 
 @users.command('list')
+@click.option('--out', '-o',  default='table'
+              , help='Out format.'
+              , type=click.Choice(['json', 'table']))
 @click.pass_context
-def users_list(ctx):
-    ctx.obj.index()
+def users_list(ctx, out):
+    ctx.obj.index(out)
 
 
 @users.command('show',help="Select either --id")
 @click.option('--id', '-i', default=None
               , type = click.STRING
               , help='Identification of project')
+@click.option('--out', '-o',  default='table'
+              , help='Out format.'
+              , type=click.Choice(['json', 'table']))
 @click.pass_context
-def users_show(ctx, id):
+def users_show(ctx, id, out):
     """Show."""
-    ctx.obj.show(id)
+    ctx.obj.show(id, out)
 
 
 @users.command('create', help="Select either --attributes or --file input")
@@ -123,10 +141,13 @@ def users_show(ctx, id):
 @click.option('--content_format', '-cf',  default='json'
               , help='Format file.' , is_eager =True
               , type=click.Choice(['json', 'yaml']))
+@click.option('--out', '-o',  default='table'
+              , help='Out format.'
+              , type=click.Choice(['json', 'table']))
 @click.pass_context
-def users_create(ctx, attributes, file, content_format):
+def users_create(ctx, attributes, file, content_format, out):
     """Creates a new project."""
-    ctx.obj.create(attributes, file, content_format)
+    ctx.obj.create(attributes, file, out)
 
 
 @users.command('delete',help="Select either --id or --file input")
@@ -140,9 +161,12 @@ def users_create(ctx, attributes, file, content_format):
 @click.option('--content_format', '-cf',  default='json'
               , help='Format file.', is_eager=True
               , type=click.Choice(['json', 'yaml']))
+@click.option('--out', '-o',  default='table'
+              , help='Out format.'
+              , type=click.Choice(['json', 'table']))
 @click.pass_context
-def users_delete(ctx, id, file, content_format):
+def users_delete(ctx, id, file, content_format, out):
     """Delelete."""
-    ctx.obj.delete(id, file, content_format)
+    ctx.obj.delete(id, file, out)
 
 

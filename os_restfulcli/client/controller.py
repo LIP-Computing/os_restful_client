@@ -112,24 +112,24 @@ class ControllerClient(object):
         except Exception as e:
             raise click.ClickException(e.message)
 
-    def index(self):
+    def index(self, out_format):
         try:
             result = self.control.index()
-            client_utils.print_table(self.resource, result)
+            client_utils.print_data(self.resource, result, out_format)
         except Exception as e:
             raise click.ClickException(e.message)
 
-    def show(self, id):
+    def show(self, id, out_format):
         try:
             result, errors = self.control.show(id)
-            client_utils.print_table(self.resource, result)
-            client_utils.print_table(self.resource, errors, 'FAIL')
+            client_utils.print_data(self.resource, result, out_format)
+            client_utils.print_data(self.resource, errors, out_format, 'FAIL')
         except TypeError as e:
             raise click.BadArgumentUsage(e.message)
         except Exception as e:
             raise click.ClickException(e.message)
 
-    def create(self, attributes, file, format ):
+    def create(self, attributes, file, out_format):
         try:
             if file:
                 parameters = file
@@ -139,14 +139,14 @@ class ControllerClient(object):
                 # click.get_current_context.get_help()
                 raise TypeError('You need to specify either --attributes or --file')
             result, errors = self.control.create(parameters)
-            client_utils.print_table(self.resource, result)
-            client_utils.print_table(self.resource, errors, 'FAIL')
+            client_utils.print_data(self.resource, result, out_format)
+            client_utils.print_data(self.resource, errors, out_format, 'FAIL')
         except TypeError as e:
             raise click.BadArgumentUsage(e.message)
         except Exception as e:
                 raise click.ClickException(e.message)
 
-    def delete(self, id, file, format):
+    def delete(self, id, file, out_format):
         try:
             if file:
                 parameters = file
@@ -155,8 +155,8 @@ class ControllerClient(object):
             else:
                 raise TypeError('You need to specify either --id or --file')
             result, errors =  self.control.delete(parameters=parameters)
-            client_utils.print_table(self.resource, result)
-            client_utils.print_table(self.resource, errors, 'FAIL')
+            client_utils.print_data(self.resource, result, out_format)
+            client_utils.print_data(self.resource, errors, out_format, 'FAIL')
         except TypeError as e:
             raise click.BadArgumentUsage(e.message)
         except Exception as e:

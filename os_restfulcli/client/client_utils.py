@@ -63,16 +63,6 @@ def get_table_headers(resource, json_data):
 
     return out_header
 
-#
-# def get_table_rows(headers, json_data):
-#     fields = []
-#     for row in json_data:
-#         fields_row = dict()
-#         for key,value in headers.iteritems():
-#             if key in row:
-#                 fields_row.update({str(row[key]), value})
-#         fields.append(fields_row)
-#     return fields
 
 
 def get_table_rows(headers, json_data):
@@ -86,38 +76,6 @@ def get_table_rows(headers, json_data):
     return fields
 
 
-def print_table1(resource, json_data, err=False):
-    try:
-        if err:
-            message = colors['FAIL'] + ' ERROR ' + colors['ENDC']
-        else:
-            message = colors['OK'] + ' RESULTS ' + colors['ENDC']
-        if json_data:
-            headers_info = get_table_headers(resource, json_data)
-            table_width = sum(headers_info.values())
-            print
-            print
-            print '{:-^{width}}'.format(message,width=table_width + 10)
-            for h,w in headers_info.iteritems():
-                print '| {:<{width}}'.format(h, width=w),
-            print '|'
-            print '{:-^{width}}'.format('',width=table_width)
-
-            for row in json_data:
-                for h,w in headers_info.iteritems():
-                    print '| {:<{width}}'.format(row[h], width=w),
-                print'|'
-            print '{:-^{width}}'.format('',width=table_width)
-
-            # if json_errors:
-            #     print '{:-^{width}}'.format(colors['FAIL'] + ' ERRORS ',width=80)
-            #     for row in json_errors:
-            #         for field in row.keys():
-            #             print '{:<{width}} |'.format(row[field], width=40),
-            #         print
-            #     print '{:-^{width}}'.format('',width=table_width)
-    except:
-        print messages["empty"]
 
 
 def print_table(resource, json_data, err=False):
@@ -132,8 +90,31 @@ def print_table(resource, json_data, err=False):
             headers = get_table_headers(resource, json_data)
             rows = get_table_rows(headers,json_data)
             print tabulate(rows, headers=headers, tablefmt="orgtbl")
+            print
     except:
         print messages["empty"]
+
+
+def print_json(data, err =False):
+    message = {}
+    try:
+        if data:
+            if err:
+                print colors['FAIL']
+                message['ERROR'] = data
+            else:
+                message['RESULTS'] = data
+            print '{:<}'.format(json.dumps(message))
+            print colors['ENDC']
+    except:
+        print "{EMPTY}"
+
+
+def print_data(resource, data, format, type = False):
+    if format == 'table':
+        print_table(resource, data, type)
+    else:
+        print_json(data, type)
 
 
 def check_identity_variables():
@@ -172,3 +153,52 @@ def validate_file_attributes(ctx, param, value):
 
     except ValueError:
         raise click.BadParameter("Format specified is %s. Choices: -cf json|yaml" % ctx.params['content_format'])
+
+###################################
+######### UNUSED #################
+
+
+def print_table1(resource, json_data, err=False):
+    try:
+        if err:
+            message = colors['FAIL'] + ' ERROR ' + colors['ENDC']
+        else:
+            message = colors['OK'] + ' RESULTS ' + colors['ENDC']
+        if json_data:
+            headers_info = get_table_headers(resource, json_data)
+            table_width = sum(headers_info.values())
+            print
+            print
+            print '{:-^{width}}'.format(message,width=table_width + 10)
+            for h,w in headers_info.iteritems():
+                print '| {:<{width}}'.format(h, width=w),
+            print '|'
+            print '{:-^{width}}'.format('',width=table_width)
+
+            for row in json_data:
+                for h,w in headers_info.iteritems():
+                    print '| {:<{width}}'.format(row[h], width=w),
+                print'|'
+            print '{:-^{width}}'.format('',width=table_width)
+
+            # if json_errors:
+            #     print '{:-^{width}}'.format(colors['FAIL'] + ' ERRORS ',width=80)
+            #     for row in json_errors:
+            #         for field in row.keys():
+            #             print '{:<{width}} |'.format(row[field], width=40),
+            #         print
+            #     print '{:-^{width}}'.format('',width=table_width)
+    except:
+        print messages["empty"]
+
+
+#
+# def get_table_rows(headers, json_data):
+#     fields = []
+#     for row in json_data:
+#         fields_row = dict()
+#         for key,value in headers.iteritems():
+#             if key in row:
+#                 fields_row.update({str(row[key]), value})
+#         fields.append(fields_row)
+#     return fields
