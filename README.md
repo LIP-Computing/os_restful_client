@@ -1,6 +1,7 @@
 # OS Restful Client
 
-Python openstack client which interacts with the OS restful api directly
+Python openstack client which interacts with the OS restful api directly.
+
 **Project and user management is supported:** 
  * List
  * Show
