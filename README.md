@@ -1,7 +1,11 @@
 # OS Restful Client
 
 Python openstack client which interacts with the OS restful api directly
-
+**Project and user management is supported:** 
+ * List
+ * Show
+ * Create single or bunch of elements, using attributes in command line or in a file
+ * delete single or bunch of elements, using attributes in command line or in a file
 
 ## Configuration
 The client requires the following environment variables:
