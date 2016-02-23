@@ -47,7 +47,7 @@ class TestIntegrationProjectCommand(os_restfulcli.tests.TestCaseCommandLine):
 
 
     def test_project_show(self):
-        result = self.runner.invoke(cli.projects, ['show', '--id=%s' % self.project_id])
+        result = self.runner.invoke(cli.projects, ['show', self.project_id])
         self.assertEqual(result.exit_code,0)
         self.assertIsNone(result.exception)
 

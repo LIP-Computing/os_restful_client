@@ -17,10 +17,11 @@
 import sys
 import click
 
-from os_restfulcli.client import client_utils
 from os_restfulcli.client.controller import ControllerClient
+from os_restfulcli.client.decorators import *
 
 sys.tracebacklimit=0
+
 
 
 @click.group()
@@ -30,6 +31,9 @@ def openstackcli():
     """
     pass
 
+#####################################
+########## PROJECTS ################
+#####################################
 
 @openstackcli.group()
 @click.pass_context
@@ -40,21 +44,14 @@ def projects(ctx):
 
 
 @projects.command('list')
-@click.option('--out', '-o',  default='table'
-              , help='Out format.'
-              , type=click.Choice(['json', 'table']))
+@list_common_options
 @click.pass_context
 def projects_list(ctx, out):
     ctx.obj.index(out)
 
 
-@projects.command('show',help="Select either --id")
-@click.option('--id', '-i', default=None
-              , type = click.STRING
-              , help='Identification of project')
-@click.option('--out', '-o',  default='table'
-              , help='Out format.'
-              , type=click.Choice(['json', 'table']))
+@projects.command('show',help="Select project identification (ID)")
+@show_common_options
 @click.pass_context
 def projects_show(ctx, id, out):
     """Show."""
@@ -62,18 +59,7 @@ def projects_show(ctx, id, out):
 
 
 @projects.command('create', help="Select either --attributes or --file input")
-@click.option('--attributes', '-a', default=None, type=click.STRING
-              , callback=client_utils.validate_attributes
-              , help='Project attributes: {"name":"name_project", "description":"description project",...}')
-@click.option('--file', '-f', default=None, type=click.File('r')
-              , help='File with list of projects attributes'
-              , callback=client_utils.validate_file_attributes)
-@click.option('--content_format', '-cf',  default='json'
-              , help='Format file.' , is_eager =True
-              , type=click.Choice(['json', 'yaml']))
-@click.option('--out', '-o',  default='table'
-              , help='Out format.'
-              , type=click.Choice(['json', 'table']))
+@create_common_options
 @click.pass_context
 def projects_create(ctx, attributes, file, content_format, out):
     """Creates a new project."""
@@ -81,24 +67,15 @@ def projects_create(ctx, attributes, file, content_format, out):
 
 
 @projects.command('delete',help="Select either --id or --file input")
-@click.option('--id', '-i', default=None
-              , type = click.STRING
-              , help='Identification of project')
-@click.option('--file', '-f', default=None,
-              help='File with list of projects ids. [{"id"="xx"},{"id"="xx2"}..]',
-              type=click.File('r')
-              , callback=client_utils.validate_file_attributes)
-@click.option('--content_format', '-cf',  default='json'
-              , help='Format file.', is_eager=True
-              , type=click.Choice(['json', 'yaml']))
-@click.option('--out', '-o',  default='table'
-              , help='Out format.'
-              , type=click.Choice(['json', 'table']))
+@delete_common_options
 @click.pass_context
 def projects_delete(ctx, id, file, content_format, out):
     """Delete."""
     ctx.obj.delete(id, file, out)
 
+#####################################
+############ USERS ##################
+#####################################
 
 
 @openstackcli.group()
@@ -110,21 +87,14 @@ def users(ctx):
 
 
 @users.command('list')
-@click.option('--out', '-o',  default='table'
-              , help='Out format.'
-              , type=click.Choice(['json', 'table']))
+@list_common_options
 @click.pass_context
 def users_list(ctx, out):
     ctx.obj.index(out)
 
 
-@users.command('show',help="Select either --id")
-@click.option('--id', '-i', default=None
-              , type = click.STRING
-              , help='Identification of project')
-@click.option('--out', '-o',  default='table'
-              , help='Out format.'
-              , type=click.Choice(['json', 'table']))
+@users.command('show',help="Select user identification (ID)")
+@show_common_options
 @click.pass_context
 def users_show(ctx, id, out):
     """Show."""
@@ -132,18 +102,7 @@ def users_show(ctx, id, out):
 
 
 @users.command('create', help="Select either --attributes or --file input")
-@click.option('--attributes', '-a', default=None, type=click.STRING
-              , callback=client_utils.validate_attributes
-              , help='Project attributes: {"name":"name_user", "description":"user description ",...}')
-@click.option('--file', '-f', default=None, type=click.File('r')
-              , help='File with list of projects attributes'
-              , callback=client_utils.validate_file_attributes)
-@click.option('--content_format', '-cf',  default='json'
-              , help='Format file.' , is_eager =True
-              , type=click.Choice(['json', 'yaml']))
-@click.option('--out', '-o',  default='table'
-              , help='Out format.'
-              , type=click.Choice(['json', 'table']))
+@create_common_options
 @click.pass_context
 def users_create(ctx, attributes, file, content_format, out):
     """Creates a new project."""
@@ -151,22 +110,10 @@ def users_create(ctx, attributes, file, content_format, out):
 
 
 @users.command('delete',help="Select either --id or --file input")
-@click.option('--id', '-i', default=None
-              , type = click.STRING
-              , help='Identification of project')
-@click.option('--file', '-f', default=None,
-              help='File with list of useres ids. [{"id"="xx"},{"id"="xx2"}..]',
-              type=click.File('r')
-              , callback=client_utils.validate_file_attributes)
-@click.option('--content_format', '-cf',  default='json'
-              , help='Format file.', is_eager=True
-              , type=click.Choice(['json', 'yaml']))
-@click.option('--out', '-o',  default='table'
-              , help='Out format.'
-              , type=click.Choice(['json', 'table']))
+@delete_common_options
 @click.pass_context
 def users_delete(ctx, id, file, content_format, out):
-    """Delelete."""
+    """Delete."""
     ctx.obj.delete(id, file, out)
 
 

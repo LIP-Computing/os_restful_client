@@ -99,6 +99,7 @@ def print_json(data, err =False):
     message = {}
     try:
         if data:
+            print
             if err:
                 print colors['FAIL']
                 message['ERROR'] = data
