@@ -15,12 +15,11 @@
 # under the License.
 
 import sys
-import click
 
 from os_restfulcli.client.controller import ControllerClient
 from os_restfulcli.client.decorators import *
 
-sys.tracebacklimit=0
+#sys.tracebacklimit=0
 
 
 
@@ -117,3 +116,100 @@ def users_delete(ctx, id, file, content_format, out):
     ctx.obj.delete(id, file, out)
 
 
+#####################################
+############ ROLES ##################
+#####################################
+
+
+@openstackcli.group()
+@click.pass_context
+def roles(ctx):
+    """Manages users."""
+    resource = 'roles'
+    ctx.obj = ControllerClient(resource)
+
+
+@roles.command('list')
+@list_common_options
+@click.pass_context
+def roles_list(ctx, out):
+    ctx.obj.index(out)
+
+
+@roles.command('show',help="Select user identification (ID)")
+@show_common_options
+@click.pass_context
+def roles_show(ctx, id, out):
+    """Show."""
+    ctx.obj.show(id, out)
+
+
+@roles.command('create', help="Select either --attributes or --file input")
+@create_common_options
+@click.pass_context
+def roles_create(ctx, attributes, file, content_format, out):
+    """Creates a new project."""
+    ctx.obj.create(attributes, file, out)
+
+
+@roles.command('delete',help="Select either --id or --file input")
+@delete_common_options
+@click.pass_context
+def roles_delete(ctx, id, file, content_format, out):
+    """Delete."""
+    ctx.obj.delete(id, file, out)
+
+#####################################
+######### GRANT_ROLES ##################
+#####################################
+
+
+@openstackcli.group()
+@click.pass_context
+def grant_roles(ctx):
+    """Manages users."""
+
+
+@grant_roles.command('list')
+@grant_arguments
+@list_common_options
+@click.pass_context
+def grant_roles_list(ctx, out, project_id, user_id):
+    path = "/projects/%s/users/%s" % (project_id, user_id)
+    obj = ControllerClient('roles', path_prefix=path)
+    obj.index(out)
+
+
+@grant_roles.command('show',help="Select user identification (ID)")
+@grant_arguments
+@show_common_options
+@click.pass_context
+def grant_roles_show(ctx, id, out, project_id, user_id):
+    """Show."""
+    path = "/projects/%s/users/%s" % (project_id, user_id)
+    obj = ControllerClient('roles', path_prefix=path)
+    obj.show(id, out)
+
+
+@grant_roles.command('create', help="Select project_id, user_id and role_id")
+@grant_arguments
+@id_argument
+@out_format_option
+@click.pass_context
+def grant_roles_create(ctx, id, project_id, user_id, out):
+    """Creates a new project."""
+    path = "/projects/%s/users/%s" % (project_id, user_id)
+    obj = ControllerClient('roles', path_prefix=path)
+    obj.link(id, out)
+
+
+@grant_roles.command('delete',help="Select either --id or --file input")
+@grant_arguments
+@id_argument
+@out_format_option
+@click.pass_context
+def grant_roles_delete(ctx, id, out, project_id, user_id):
+    """Delete."""
+    path = "/projects/%s/users/%s" % (project_id, user_id)
+    obj = ControllerClient('roles', path_prefix=path)
+    obj.delete(id, None, out)

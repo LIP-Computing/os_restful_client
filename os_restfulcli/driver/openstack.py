@@ -107,13 +107,20 @@ class OpenStackDriver(object):
         """
         return self._get_req(path, method="DELETE")
 
+    def _make_put_request(self, path):
+        """Create DELETE request
+        This method create a DELETE Request instance
+        :param req: the incoming request
+        :param path: element location
+        """
+        return self._get_req(path, method="PUT")
+
     def index(self, path, parameters=None):
         """Get a list of networks.
         This method retrieve a list of network to which the tenant has access.
         :param req: the incoming request
         :param parameters: parameters to filter results
         """
-        resource = parsers.get_resource_from_path(path, False)
         os_req = self._make_get_request(path, parameters)
         response = os_req.get_response(None)
         json_response = self.get_from_response(response, {})
@@ -147,6 +154,17 @@ class OpenStackDriver(object):
         response = req.get_response(None)
         json_response = self.get_from_response(response, {})
         return json_response
+
+    def put(self, path):
+        """Create a server.
+        :param path: the incoming request
+        """
+        req = self._make_put_request(path)
+        response = req.get_response(None)
+        json_response = self.get_from_response(response, {})
+
+        return json_response
+
     #
     # def get_subnet(self, req, id):
     #     """Get information from a subnet.

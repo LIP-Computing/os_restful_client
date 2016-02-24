@@ -13,32 +13,35 @@
 # WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 # License for the specific language governing permissions and limitations
 # under the License.
-
 import testtools
 
 from os_restfulcli.client import cli
 from os_restfulcli.client.controller import ControllerResource
-from os_restfulcli.tests.test_integration import configure_env
 from os_restfulcli.driver import parsers
+from os_restfulcli.tests.test_integration import configure_env
+
 import os_restfulcli.tests
 
 
-class TestIntegrationProjectCommand(os_restfulcli.tests.TestCaseCommandLine):
+class TestIntegrationRolesommand(os_restfulcli.tests.TestCaseCommandLine):
 
     def setUp(self):
-        super(TestIntegrationProjectCommand, self).setUp()
-        self.user_id = "89c3bc64dd4e4436a67342383fd07d4e"
+        super(TestIntegrationRolesommand, self).setUp()
+        self.user_id = "3a8b1c4387664d9488dee661df025b80"
         self.project_id = "484d3a7eeb4f4462b329c1d0463cf324"
+        self.anotherrole = "e80fa7ab6cfa45d39be195878350853d"
         configure_env(self.project_id)
 
-    def test_user_list(self):
-        result = self.runner.invoke(cli.users, ['list'])
+    def test_roles_list(self):
+        result = self.runner.invoke(cli.grant_roles, ['list', self.project_id, self.user_id])
         self.assertEqual(result.exit_code,0)
         self.assertIsNone(result.exception)
 
-
-    def test_user_show(self):
-        result = self.runner.invoke(cli.users, ['show', self.user_id])
+    def test_roles_link_unlink(self):
+        result = self.runner.invoke(cli.grant_roles, ['create', self.project_id, self.user_id, self.anotherrole])
+        self.assertEqual(result.exit_code,0)
+        self.assertIsNone(result.exception)
+        result = self.runner.invoke(cli.grant_roles, ['delete', self.project_id, self.user_id, self.anotherrole])
         self.assertEqual(result.exit_code,0)
         self.assertIsNone(result.exception)
 

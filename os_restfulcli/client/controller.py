@@ -27,8 +27,9 @@ class ControllerResource(object):
     # todo(jorgesece): one controller per resource or endpoint should be a parameter with flexible path
     resource = None
 
-    def __init__(self, resource):
+    def __init__(self, resource, defaul_path=''):
         self.resource = resource
+        self.default_path = defaul_path
         if client_utils.check_identity_variables():
             self.identity = client_utils.get_identity_variables()
         else:
@@ -40,19 +41,18 @@ class ControllerResource(object):
         self.os_helper = OpenStackDriver(self.identity['OS_AUTH_URL'], self.identity['OS_PORT'], self.identity["OS_VERSION"],self.identity['OS_TOKEN'])
 
     def index(self, parameters=None):
-        """List networks filtered by parameters
+        """List resources filtered by parameters
         :param parameters: request parameters
         """
-        path = '/%s' % self.resource
+        path = '%s/%s' % (self.default_path, self.resource)
         r = self.os_helper.index(path, parameters)
-
         return r[self.resource]
 
     def create(self, parameters):
-        """Create a network instance in the cloud
+        """Create a resource instance in the cloud
         :param parameters: array of projects (containg their paramemters)
         """
-        path = '/%s' % self.resource
+        path = '%s/%s' % (self.default_path, self.resource)
         created = []
         error_creation = []
         for param in parameters:
@@ -67,13 +67,13 @@ class ControllerResource(object):
         return created, error_creation
 
     def show(self, id):
-        """Get network details
+        """Get resource details
         :param id: identificator
         """
         showed = []
         showed_err = []
         try:
-            path = "/%s/%s" % (self.resource, id)
+            path = '%s/%s/%s' % (self.default_path, self.resource, id)
             result = self.os_helper.show(path)
             showed.append(result[self.resource[:-1]])
         except TypeError:
@@ -84,15 +84,34 @@ class ControllerResource(object):
             showed_err.append(result)
         return showed, showed_err
 
+    def link(self, id): # fixme(jorgesece): manage it with parameters list
+        """Put link resources
+        :param id: identificator
+        """
+        linked = []
+        link_err = []
+        try:
+            path = '%s/%s/%s' % (self.default_path, self.resource, id)
+            result = self.os_helper.put(path)
+            result = parsers.parse_controller_delete("statisfully linked", id, result)
+            linked.append(result)
+        except TypeError:
+            result = parsers.parse_controller_delete("ERROR", "Undefined", "Bad attribute definition for OS")
+            link_err.append(result)
+        except Exception as e:
+            result = parsers.parse_controller_err(id, e.message)
+            link_err.append(result)
+        return linked, link_err
+
     def delete(self, parameters):
-        """delete networks which satisfy the parameters
+        """delete resources which satisfy the parameters
         :param parameters:
         """
         deleted = []
         deleted_err = []
         for param in parameters:
             try:
-                path = "/%s/%s" % (self.resource, param['id'])
+                path = '%s/%s/%s' % (self.default_path, self.resource, param['id'])
                 result = self.os_helper.delete(path)
                 result = parsers.parse_controller_delete("statisfully deleted", param['id'], result)
                 deleted.append(result)
@@ -104,13 +123,19 @@ class ControllerResource(object):
                 deleted_err.append(result)
         return deleted, deleted_err
 
+    def custom_query(self, path, parameters=None):
+        """List resources filtered by parameters
+        :param parameters: request parameters
+        """
+        r = self.os_helper.index(path, parameters)
+        return r
 
 class ControllerClient(object):
 
-    def __init__(self, resource):
+    def __init__(self, resource, path_prefix=''):
         try:
             self.resource = resource
-            self.control = ControllerResource(resource)
+            self.control = ControllerResource(resource, path_prefix)
         except Exception as e:
             raise click.ClickException(e.message)
 
@@ -163,3 +188,31 @@ class ControllerClient(object):
             raise click.BadArgumentUsage(e.message)
         except Exception as e:
             raise click.ClickException(e.message)
+
+    def link(self, id, out_format):
+        try:
+            result, errors = self.control.link(id)
+            client_utils.print_data(self.resource, result, out_format)
+            client_utils.print_data(self.resource, errors, out_format, 'FAIL')
+        except TypeError as e:
+            raise click.BadArgumentUsage(e.message)
+        except Exception as e:
+                raise click.ClickException(e.message)
+
+
+# class ControllerComplexClient(object):
+#
+#     def __init__(self, resource, path_prefix=''):
+#         try:
+#             self.resource = resource
+#             self.control = ControllerResource(resource, path_prefix)
+#         except Exception as e:
+#             raise click.ClickException(e.message)
+#
+#     def list_project_roles(self, out_format):
+#         path= "/projects"
+#         try:
+#             result = self.control.custom_query(path)
+#             client_utils.print_data(self.resource, result, out_format)
+#         except Exception as e:
+#             raise click.ClickException(e.message)

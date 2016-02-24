@@ -54,6 +54,16 @@ def file_options(f):
     return out
 
 
+def grant_arguments(f):
+    out = click.argument('user_id'
+              , type = click.STRING
+              )(f)
+    out = click.argument('project_id'
+              , type = click.STRING
+              )(f)
+    return out
+
+
 def list_common_options(f):
     f = out_format_option(f)
     return f
@@ -77,3 +87,4 @@ def delete_common_options(f):
     f = file_options(f)
     f = id_options(f)
     return f
+

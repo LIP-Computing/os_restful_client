@@ -29,14 +29,12 @@ messages = { "empty": "No data found",
             "error": "There was an error"
           }
 elements_to_delete = ["links","parent_id","id"]
-elements_width = {'projects':{'domain_id':35,'name':20, 'id':35,'description':35}}
 
 colors = { 'FAIL' : '\033[91m',
            'OK': '\033[92m',
            'WARNING': '\033[93m',
            'ENDC': '\033[0m'
          }
-
 
 
 def get_table_headers(resource, json_data):
