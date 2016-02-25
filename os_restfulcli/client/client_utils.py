@@ -34,16 +34,17 @@ colors = { 'FAIL' : '\033[91m',
 messages = { "empty": colors['FAIL'] + ' "Parsing error" ' + colors['ENDC'],
             "error": "There was an error"
           }
-elements_to_delete = ["links","parent_id","id"]
+elements_to_delete = ["links","parent_id","id","scope"]
 
 
 
 def get_table_headers(resource, json_data):
     default_width = 15
-    headers_out = {}
+    out_header = []
     headers = json_data[0].keys()
     headers.sort(reverse=True)
-    out_header = ["id"]
+    if 'id' in headers:
+        out_header.append("id")
     for h in headers:
         if h not in elements_to_delete:
             out_header.append(h)
@@ -82,7 +83,7 @@ def print_table(resource, json_data, err=False):
         if err:
             message = colors['FAIL'] + ' ERROR ' + colors['ENDC']
         else:
-            message = colors['OK'] + ' RESULTS ' + colors['ENDC']
+            message = colors['OK'] + resource.upper() + colors['ENDC']
         if json_data:
             print
             print '   =====> {:<} <====='.format(message)

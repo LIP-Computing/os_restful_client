@@ -128,13 +128,12 @@ class ControllerResource(object):
                 deleted_err.append(result)
         return deleted, deleted_err
 
-    def custom_query(self, path, parameters=None):
+    def custom_query(self, path, custom_resource, parameters=None):
         """List resources filtered by parameters
         :param parameters: request parameters
         """
         r = self.os_helper.index(path, parameters)
-        if "resource" in parameters:
-            r = r[parameters["resources"]]
+        r = r[custom_resource]
         return r
 
 class ControllerClient(object):
@@ -146,9 +145,9 @@ class ControllerClient(object):
         except Exception as e:
             raise click.ClickException(e.message)
 
-    def index(self, out_format):
+    def index(self, out_format, parameters=None):
         try:
-            result = self.control.index()
+            result = self.control.index(parameters=None)
             client_utils.print_data(self.resource, result, out_format)
         except Exception as e:
             raise click.ClickException(e.message)
@@ -205,6 +204,28 @@ class ControllerClient(object):
             raise click.BadArgumentUsage(e.message)
         except Exception as e:
                 raise click.ClickException(e.message)
+
+    def list_roles_by_query(self, out_format, parameters):
+        try:
+            data = []
+            result = self.control.index(parameters)
+            for row in result:
+                row2 = {}
+                row.update(row['scope'])
+                del row['scope']
+                for key, value in row.iteritems():
+                    if 'id' in value:
+                       row2[key]= value['id']
+                       name = self.control.custom_query('/%ss/%s'% (key, row2[key]),key)['name']
+                       row2['%s_name'%key] = name
+                data.append(row2)
+            client_utils.print_data(self.resource, data, out_format)
+        except TypeError as e:
+            raise click.BadArgumentUsage(e.message)
+        except Exception as e:
+                raise click.ClickException(e.message)
+
+
 
 
 # class ControllerComplexClient(object):

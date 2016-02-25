@@ -223,6 +223,17 @@ def grant_roles_list_by_project(ctx, id, out):
     parameters = {}
     parameters["scope.project.id"] = id
     obj = ControllerClient('role_assignments')
-    obj.show(id=None, out_format=out, parameters=parameters)
+    obj.list_roles_by_query(out_format=out, parameters=parameters)
+
+@grant_roles.command('list_by_user',help="Select project id")
+@id_argument
+@out_format_option
+@click.pass_context
+def grant_roles_list_by_user(ctx, id, out):
+    """Delete."""
+    parameters = {}
+    parameters["user.id"] = id
+    obj = ControllerClient('role_assignments')
+    obj.list_roles_by_query(out_format=out, parameters=parameters)
 
 
