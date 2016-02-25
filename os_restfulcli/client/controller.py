@@ -40,6 +40,15 @@ class ControllerResource(object):
             #self.identity = {'OS_AUTH_URL':'127.0.0.23','OS_PORT': '5000', "OS_VERSION": 'v3','OS_TOKEN':'cb6ec577f8a340f7bf49812aada2cfde'}
         self.os_helper = OpenStackDriver(self.identity['OS_AUTH_URL'], self.identity['OS_PORT'], self.identity["OS_VERSION"],self.identity['OS_TOKEN'])
 
+    def set_resource(self, resource):
+        self.resource = resource
+
+    def get_resource(self):
+        return self.resource
+
+    def set_path(self, path):
+        self.default_path = path
+
     def index(self, parameters=None):
         """List resources filtered by parameters
         :param parameters: request parameters
@@ -136,27 +145,37 @@ class ControllerResource(object):
         r = r[custom_resource]
         return r
 
+
+
 class ControllerClient(object):
 
     def __init__(self, resource, path_prefix=''):
         try:
-            self.resource = resource
             self.control = ControllerResource(resource, path_prefix)
         except Exception as e:
             raise click.ClickException(e.message)
 
+    def update_path(self, path, resource=None):
+        if path:
+            self.control.set_path(path)
+        if resource:
+            self.control.set_resource(resource)
+
+    def get_resource(self):
+        return self.control.get_resource()
+
     def index(self, out_format, parameters=None):
         try:
             result = self.control.index(parameters=None)
-            client_utils.print_data(self.resource, result, out_format)
+            client_utils.print_data(self.get_resource(), result, out_format)
         except Exception as e:
             raise click.ClickException(e.message)
 
     def show(self, id, out_format, parameters=None):
         try:
             result, errors = self.control.show(id, parameters)
-            client_utils.print_data(self.resource, result, out_format)
-            client_utils.print_data(self.resource, errors, out_format, 'FAIL')
+            client_utils.print_data(self.get_resource(), result, out_format)
+            client_utils.print_data(self.get_resource(), errors, out_format, 'FAIL')
         except TypeError as e:
             raise click.BadArgumentUsage(e.message)
         except Exception as e:
@@ -172,8 +191,8 @@ class ControllerClient(object):
                 # click.get_current_context.get_help()
                 raise TypeError('You need to specify either --attributes or --file')
             result, errors = self.control.create(parameters)
-            client_utils.print_data(self.resource, result, out_format)
-            client_utils.print_data(self.resource, errors, out_format, 'FAIL')
+            client_utils.print_data(self.get_resource(), result, out_format)
+            client_utils.print_data(self.get_resource(), errors, out_format, 'FAIL')
         except TypeError as e:
             raise click.BadArgumentUsage(e.message)
         except Exception as e:
@@ -188,8 +207,8 @@ class ControllerClient(object):
             else:
                 raise TypeError('You need to specify either --id or --file')
             result, errors =  self.control.delete(parameters=parameters)
-            client_utils.print_data(self.resource, result, out_format)
-            client_utils.print_data(self.resource, errors, out_format, 'FAIL')
+            client_utils.print_data(self.get_resource(), result, out_format)
+            client_utils.print_data(self.get_resource(), errors, out_format, 'FAIL')
         except TypeError as e:
             raise click.BadArgumentUsage(e.message)
         except Exception as e:
@@ -198,8 +217,8 @@ class ControllerClient(object):
     def link(self, id, out_format):
         try:
             result, errors = self.control.link(id)
-            client_utils.print_data(self.resource, result, out_format)
-            client_utils.print_data(self.resource, errors, out_format, 'FAIL')
+            client_utils.print_data(self.get_resource(), result, out_format)
+            client_utils.print_data(self.get_resource(), errors, out_format, 'FAIL')
         except TypeError as e:
             raise click.BadArgumentUsage(e.message)
         except Exception as e:
@@ -219,12 +238,19 @@ class ControllerClient(object):
                        name = self.control.custom_query('/%ss/%s'% (key, row2[key]),key)['name']
                        row2['%s_name'%key] = name
                 data.append(row2)
-            client_utils.print_data(self.resource, data, out_format)
+            client_utils.print_data(self.get_resource(), data, out_format)
         except TypeError as e:
             raise click.BadArgumentUsage(e.message)
         except Exception as e:
                 raise click.ClickException(e.message)
 
+    def id_name_translation(self, resource ,name):
+         parameters = {}
+         parameters["name"] = name
+         path = "/%s" % resource
+         result = self.control.custom_query(path, custom_resource=resource, parameters=parameters)
+         id = result[0]['id']
+         return id
 
 
 

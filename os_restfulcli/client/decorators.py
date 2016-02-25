@@ -34,6 +34,7 @@ def id_options(f):
 def id_argument(f):
     return click.argument('id'
               , type = click.STRING
+              , callback=client_utils.get_id_from_name
               )(f)
 
 
@@ -57,9 +58,11 @@ def file_options(f):
 def grant_arguments(f):
     out = click.argument('user_id'
               , type = click.STRING
+              , callback=client_utils.get_attr_id_from_name
               )(f)
     out = click.argument('project_id'
               , type = click.STRING
+              , callback=client_utils.get_attr_id_from_name
               )(f)
     return out
 

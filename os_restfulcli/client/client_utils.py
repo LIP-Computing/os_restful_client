@@ -155,6 +155,27 @@ def validate_file_attributes(ctx, param, value):
     except ValueError:
         raise click.BadParameter("Format specified is %s. Choices: -cf json|yaml" % ctx.params['content_format'])
 
+
+def get_id_from_name(ctx, param, value):
+    if not value:
+        return value
+    try:
+        out = ctx.obj.id_name_translation(ctx.parent.command_path, value)
+        return out
+    except ValueError:
+        raise click.BadParameter("Name does not exist" % value)
+
+
+def get_attr_id_from_name(ctx, param, value):
+    if not value:
+        return value
+    try:
+        resource = "%ss" % param.name[:-3]
+        out = ctx.obj.id_name_translation(resource, value)
+        return out
+    except ValueError:
+        raise click.BadParameter("Name does not exist" % value)
+
 ###################################
 ######### UNUSED #################
 

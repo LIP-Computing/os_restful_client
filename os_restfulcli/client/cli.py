@@ -168,7 +168,7 @@ def roles_delete(ctx, id, file, content_format, out):
 @click.pass_context
 def grant_roles(ctx):
     """Manages users."""
-
+    ctx.obj = ControllerClient('roles')
 
 @grant_roles.command('list')
 @grant_arguments
@@ -176,8 +176,8 @@ def grant_roles(ctx):
 @click.pass_context
 def grant_roles_list(ctx, out, project_id, user_id):
     path = "/projects/%s/users/%s" % (project_id, user_id)
-    obj = ControllerClient('roles', path_prefix=path)
-    obj.index(out)
+    ctx.obj.update_path(path)
+    ctx.obj.index(out)
 
 
 @grant_roles.command('show',help="Select user identification (ID)")
@@ -187,8 +187,8 @@ def grant_roles_list(ctx, out, project_id, user_id):
 def grant_roles_show(ctx, id, out, project_id, user_id):
     """Show."""
     path = "/projects/%s/users/%s" % (project_id, user_id)
-    obj = ControllerClient('roles', path_prefix=path)
-    obj.show(id, out)
+    ctx.obj.update_path(path)
+    ctx.obj.show(id, out)
 
 
 @grant_roles.command('create', help="Select project_id, user_id and role_id")
@@ -199,8 +199,8 @@ def grant_roles_show(ctx, id, out, project_id, user_id):
 def grant_roles_create(ctx, id, project_id, user_id, out):
     """Creates a new project."""
     path = "/projects/%s/users/%s" % (project_id, user_id)
-    obj = ControllerClient('roles', path_prefix=path)
-    obj.link(id, out)
+    ctx.obj.update_path(path)
+    ctx.obj.link(id, out)
 
 
 @grant_roles.command('delete',help="Select either --id or --file input")
@@ -211,8 +211,8 @@ def grant_roles_create(ctx, id, project_id, user_id, out):
 def grant_roles_delete(ctx, id, out, project_id, user_id):
     """Delete."""
     path = "/projects/%s/users/%s" % (project_id, user_id)
-    obj = ControllerClient('roles', path_prefix=path)
-    obj.delete(id, None, out)
+    ctx.obj.update_path(path)
+    ctx.obj.delete(id, None, out)
 
 @grant_roles.command('list_by_project',help="Select project id")
 @id_argument
@@ -222,8 +222,8 @@ def grant_roles_list_by_project(ctx, id, out):
     """Delete."""
     parameters = {}
     parameters["scope.project.id"] = id
-    obj = ControllerClient('role_assignments')
-    obj.list_roles_by_query(out_format=out, parameters=parameters)
+    ctx.obj.update_path(None,'role_assignments')
+    ctx.obj.list_roles_by_query(out_format=out, parameters=parameters)
 
 @grant_roles.command('list_by_user',help="Select project id")
 @id_argument
@@ -233,7 +233,7 @@ def grant_roles_list_by_user(ctx, id, out):
     """Delete."""
     parameters = {}
     parameters["user.id"] = id
-    obj = ControllerClient('role_assignments')
-    obj.list_roles_by_query(out_format=out, parameters=parameters)
+    ctx.obj.update_path(None,'role_assignments')
+    ctx.obj.list_roles_by_query(out_format=out, parameters=parameters)
 
 
