@@ -66,16 +66,21 @@ class ControllerResource(object):
                 error_creation.append(result)
         return created, error_creation
 
-    def show(self, id):
+    def show(self, id, parameters=None):
         """Get resource details
         :param id: identificator
         """
         showed = []
         showed_err = []
         try:
-            path = '%s/%s/%s' % (self.default_path, self.resource, id)
-            result = self.os_helper.show(path)
-            showed.append(result[self.resource[:-1]])
+            path = '%s/%s' % (self.default_path, self.resource)
+            if id:
+                path = '%s/%s' % (path, id)
+            result = self.os_helper.show(path, parameters)
+            if self.resource[:-1] in result:
+                showed.append(result[self.resource[:-1]])
+            else:
+                showed.append(result[self.resource])
         except TypeError:
             result = parsers.parse_controller_err("Undefined", "Bad attribute definition for OS")
             showed_err.append(result)
@@ -128,6 +133,8 @@ class ControllerResource(object):
         :param parameters: request parameters
         """
         r = self.os_helper.index(path, parameters)
+        if "resource" in parameters:
+            r = r[parameters["resources"]]
         return r
 
 class ControllerClient(object):
@@ -146,9 +153,9 @@ class ControllerClient(object):
         except Exception as e:
             raise click.ClickException(e.message)
 
-    def show(self, id, out_format):
+    def show(self, id, out_format, parameters=None):
         try:
-            result, errors = self.control.show(id)
+            result, errors = self.control.show(id, parameters)
             client_utils.print_data(self.resource, result, out_format)
             client_utils.print_data(self.resource, errors, out_format, 'FAIL')
         except TypeError as e:
@@ -209,10 +216,13 @@ class ControllerClient(object):
 #         except Exception as e:
 #             raise click.ClickException(e.message)
 #
-#     def list_project_roles(self, out_format):
-#         path= "/projects"
+#     def list_users_by_projects(self, id, out_format):
+#         parameters = {}
+#         parameters["resources"] = "role_assignments"
+#         path= "role_assignments?scope.project.id=%s" % id
+#           #curl -H "X-Auth-token: c328b005e800422c9835eabde6d6c854" http://localhost:5000/v3/role_assignments?scope.project.id=484d3a7eeb4f4462b329c1d0463cf324
 #         try:
-#             result = self.control.custom_query(path)
+#             result = self.control.custom_query(path, parameters )
 #             client_utils.print_data(self.resource, result, out_format)
 #         except Exception as e:
 #             raise click.ClickException(e.message)

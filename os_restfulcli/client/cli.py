@@ -213,3 +213,16 @@ def grant_roles_delete(ctx, id, out, project_id, user_id):
     path = "/projects/%s/users/%s" % (project_id, user_id)
     obj = ControllerClient('roles', path_prefix=path)
     obj.delete(id, None, out)
+
+@grant_roles.command('list_by_project',help="Select project id")
+@id_argument
+@out_format_option
+@click.pass_context
+def grant_roles_list_by_project(ctx, id, out):
+    """Delete."""
+    parameters = {}
+    parameters["scope.project.id"] = id
+    obj = ControllerClient('role_assignments')
+    obj.show(id=None, out_format=out, parameters=parameters)
+
+

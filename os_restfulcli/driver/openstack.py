@@ -129,7 +129,7 @@ class OpenStackDriver(object):
     def create(self, path, parameters):
         """Create a server.
         :param path: the incoming request
-        :param parameters: parameters with values for the new network
+        :param parameters: parameters with values for the new resource
         """
         req = self._make_create_request(path, parameters)
         response = req.get_response(None)
@@ -146,11 +146,12 @@ class OpenStackDriver(object):
         json_response = self.get_from_response(response, {})
         return json_response
 
-    def show(self, path):
+    def show(self, path, parameters=None):
         """Get info from a resource. It returns json code from the server
         :param path: the incoming request
+        :param parameters: parameters with values to filter
         """
-        req = self._make_get_request(path)
+        req = self._make_get_request(path, parameters)
         response = req.get_response(None)
         json_response = self.get_from_response(response, {})
         return json_response

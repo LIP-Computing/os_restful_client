@@ -25,16 +25,17 @@ auth_variables = ['OS_AUTH_URL',
                   'OS_PORT',
                   "OS_VERSION"
                  ]
-messages = { "empty": "No data found",
-            "error": "There was an error"
-          }
-elements_to_delete = ["links","parent_id","id"]
-
 colors = { 'FAIL' : '\033[91m',
            'OK': '\033[92m',
            'WARNING': '\033[93m',
            'ENDC': '\033[0m'
          }
+
+messages = { "empty": colors['FAIL'] + ' "Parsing error" ' + colors['ENDC'],
+            "error": "There was an error"
+          }
+elements_to_delete = ["links","parent_id","id"]
+
 
 
 def get_table_headers(resource, json_data):
