@@ -22,7 +22,6 @@ from os_restfulcli.client.decorators import *
 #sys.tracebacklimit=0
 
 
-
 @click.group()
 @click.version_option()
 def openstackcli():
@@ -30,6 +29,8 @@ def openstackcli():
     """
     pass
 
+def test_decorator():
+    return  openstackcli();
 #####################################
 ########## PROJECTS ################
 #####################################
@@ -50,11 +51,12 @@ def projects_list(ctx, out):
 
 
 @projects.command('show',help="Select project identification (ID)")
-@show_common_options
+@out_format_option
+@name_argument
 @click.pass_context
-def projects_show(ctx, id, out):
+def projects_show(ctx, project_name, out):
     """Show."""
-    ctx.obj.show(id, out)
+    ctx.obj.show(project_name, out)
 
 
 @projects.command('create', help="Select either --attributes or --file input")
@@ -93,11 +95,12 @@ def users_list(ctx, out):
 
 
 @users.command('show',help="Select user identification (ID)")
-@show_common_options
+@out_format_option
+@name_argument
 @click.pass_context
-def users_show(ctx, id, out):
+def users_show(ctx, user_name, out):
     """Show."""
-    ctx.obj.show(id, out)
+    ctx.obj.show(user_name, out)
 
 
 @users.command('create', help="Select either --attributes or --file input")
@@ -137,11 +140,12 @@ def roles_list(ctx, out):
 
 
 @roles.command('show',help="Select user identification (ID)")
-@show_common_options
+@out_format_option
+@name_argument
 @click.pass_context
-def roles_show(ctx, id, out):
+def roles_show(ctx, role_name, out):
     """Show."""
-    ctx.obj.show(id, out)
+    ctx.obj.show(role_name, out)
 
 
 @roles.command('create', help="Select either --attributes or --file input")
@@ -164,75 +168,58 @@ def roles_delete(ctx, id, file, content_format, out):
 #####################################
 
 
-@openstackcli.group()
-@click.pass_context
-def grant_roles(ctx):
-    """Manages users."""
-    ctx.obj = ControllerClient('roles')
-
-@grant_roles.command('list')
+@roles.command('list_grants')
 @grant_arguments
 @list_common_options
 @click.pass_context
-def grant_roles_list(ctx, out, project_id, user_id):
-    path = "/projects/%s/users/%s" % (project_id, user_id)
+def roles_grant_list(ctx, out, project_name, user_name):
+    path = "/projects/%s/users/%s" % (project_name, user_name)
     ctx.obj.update_path(path)
     ctx.obj.index(out)
 
 
-@grant_roles.command('show',help="Select user identification (ID)")
+@roles.command('create_grant', help="Select project_id, user_id and role_id")
 @grant_arguments
-@show_common_options
-@click.pass_context
-def grant_roles_show(ctx, id, out, project_id, user_id):
-    """Show."""
-    path = "/projects/%s/users/%s" % (project_id, user_id)
-    ctx.obj.update_path(path)
-    ctx.obj.show(id, out)
-
-
-@grant_roles.command('create', help="Select project_id, user_id and role_id")
-@grant_arguments
-@id_argument
+@name_argument
 @out_format_option
 @click.pass_context
-def grant_roles_create(ctx, id, project_id, user_id, out):
+def roles_grant_create(ctx, role_name, project_name, user_name, out):
     """Creates a new project."""
-    path = "/projects/%s/users/%s" % (project_id, user_id)
+    path = "/projects/%s/users/%s" % (project_name, user_name)
     ctx.obj.update_path(path)
-    ctx.obj.link(id, out)
+    ctx.obj.link(role_name, out)
 
 
-@grant_roles.command('delete',help="Select either --id or --file input")
+@roles.command('delete_grant',help="Select either --id or --file input")
 @grant_arguments
-@id_argument
+@name_argument
 @out_format_option
 @click.pass_context
-def grant_roles_delete(ctx, id, out, project_id, user_id):
+def roles_grant_delete(ctx, role_name, out, project_name, user_name):
     """Delete."""
-    path = "/projects/%s/users/%s" % (project_id, user_id)
+    path = "/projects/%s/users/%s" % (project_name, user_name)
     ctx.obj.update_path(path)
-    ctx.obj.delete(id, None, out)
+    ctx.obj.delete(role_name, None, out)
 
-@grant_roles.command('list_by_project',help="Select project id")
-@id_argument
+@roles.command('grants_by_project',help="Select project id")
+@name_list_argument
 @out_format_option
 @click.pass_context
-def grant_roles_list_by_project(ctx, id, out):
+def roles_grant_list_by_project(ctx, project_name, out):
     """Delete."""
     parameters = {}
-    parameters["scope.project.id"] = id
+    parameters["scope.project.id"] = project_name
     ctx.obj.update_path(None,'role_assignments')
     ctx.obj.list_roles_by_query(out_format=out, parameters=parameters)
 
-@grant_roles.command('list_by_user',help="Select project id")
-@id_argument
+@roles.command('grants_by_user',help="Select project id")
+@name_list_argument
 @out_format_option
 @click.pass_context
-def grant_roles_list_by_user(ctx, id, out):
+def roles_grant_list_by_user(ctx, user_name, out):
     """Delete."""
     parameters = {}
-    parameters["user.id"] = id
+    parameters["user.id"] = user_name
     ctx.obj.update_path(None,'role_assignments')
     ctx.obj.list_roles_by_query(out_format=out, parameters=parameters)
 

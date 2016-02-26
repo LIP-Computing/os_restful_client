@@ -170,7 +170,7 @@ def get_attr_id_from_name(ctx, param, value):
     if not value:
         return value
     try:
-        resource = "%ss" % param.name[:-3]
+        resource = "%ss" % param.name.split('_')[0]
         out = ctx.obj.id_name_translation(resource, value)
         return out
     except ValueError:

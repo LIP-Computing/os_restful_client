@@ -38,7 +38,7 @@ class TestIntegrationProjectCommand(os_restfulcli.tests.TestCaseCommandLine):
 
 
     def test_user_show(self):
-        result = self.runner.invoke(cli.users, ['show', self.user_id])
+        result = self.runner.invoke(cli.users, ['show', 'admin'])
         self.assertEqual(result.exit_code,0)
         self.assertIsNone(result.exception)
 

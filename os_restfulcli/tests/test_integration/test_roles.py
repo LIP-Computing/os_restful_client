@@ -43,21 +43,16 @@ class TestIntegrationRolesommand(os_restfulcli.tests.TestCaseCommandLine):
         self.assertEqual(result.exit_code,0)
         self.assertIsNone(result.exception)
 
-    def test_roles_list_name(self):
-        result = self.runner.invoke(cli.grant_roles, ['list', 'admin', 'admin'])
-        self.assertEqual(result.exit_code,0)
-        self.assertIsNone(result.exception)
-
-    def test_roles_list(self):
-        result = self.runner.invoke(cli.grant_roles, ['list', self.project_id, self.user_id])
+    def test_grant_list(self):
+        result = self.runner.invoke(cli.roles, ['list_grants', 'admin', 'admin'])
         self.assertEqual(result.exit_code,0)
         self.assertIsNone(result.exception)
 
     def test_roles_link_unlink(self):
-        result = self.runner.invoke(cli.grant_roles, ['create', self.project_id, self.user_id, self.anotherrole])
+        result = self.runner.invoke(cli.roles, ['create_grant', 'demo', 'demo','anotherrole'])
         self.assertEqual(result.exit_code,0)
         self.assertIsNone(result.exception)
-        result = self.runner.invoke(cli.grant_roles, ['delete', self.project_id, self.user_id, self.anotherrole])
+        result = self.runner.invoke(cli.roles, ['delete_grant', 'demo', 'demo','anotherrole'])
         self.assertEqual(result.exit_code,0)
         self.assertIsNone(result.exception)
 
@@ -87,19 +82,14 @@ class TestIntegrationRolesommand(os_restfulcli.tests.TestCaseCommandLine):
     #         self.assertEqual(result_delete.exit_code,0)
     #         self.assertIsNone(result_delete.exception)
 
-    def test_list_granted(self):
-        result = self.runner.invoke(cli.grant_roles, ['list', self.project_id, self.user_id])
-        self.assertEqual(result.exit_code,0)
-        self.assertIsNone(result.exception)
-
 
     def test_list_by_project(self):
-        result = self.runner.invoke(cli.grant_roles, ['list_by_project', self.project_id])
+        result = self.runner.invoke(cli.roles, ['grants_by_project',  'admin'])
         self.assertEqual(result.exit_code,0)
         self.assertIsNone(result.exception)
 
     def test_list_by_user(self):
-        result = self.runner.invoke(cli.grant_roles, ['list_by_user', self.user_id])
+        result = self.runner.invoke(cli.roles, ['grants_by_user',  'admin'])
         self.assertEqual(result.exit_code,0)
         self.assertIsNone(result.exception)
 

@@ -43,8 +43,9 @@ class TestCommandProject(os_restfulcli.tests.TestCaseCommandLine):
 
     @mock.patch.object(controller.ControllerClient, "__new__")
     @mock.patch.object(controller.ControllerClient, "show")
-    def test_project_show(self, m_new, m_show):
-        result = self.runner.invoke(cli.projects, ['show'])
+    @mock.patch.object(controller.ControllerClient, 'id_name_translation')
+    def test_project_show(self, m_new, m_show, m_translation):
+        result = self.runner.invoke(cli.projects, ['show',''])
         self.assertEqual(result.exit_code,0)
         self.assertIsNone(result.exception)
 
@@ -160,8 +161,9 @@ class TestCommandUser(os_restfulcli.tests.TestCaseCommandLine):
 
     @mock.patch.object(controller.ControllerClient, "__new__")
     @mock.patch.object(controller.ControllerClient, "show")
-    def test_user_show(self, m_new, m_show):
-        result = self.runner.invoke(cli.users, ['show'])
+    @mock.patch.object(controller.ControllerClient, 'id_name_translation')
+    def test_user_show(self, m_new, m_show, m_trans):
+        result = self.runner.invoke(cli.users, ['show',''])
         self.assertEqual(result.exit_code,0)
         self.assertIsNone(result.exception)
 

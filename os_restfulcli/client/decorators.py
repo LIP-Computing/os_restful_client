@@ -38,6 +38,23 @@ def id_argument(f):
               )(f)
 
 
+def name_argument(f):
+    name = "%s_name" % f.func_name.split('_')[0][:-1]
+    return click.argument(name
+              , type = click.STRING
+              , callback=client_utils.get_attr_id_from_name
+              )(f)
+
+
+def name_list_argument(f):
+    resource = f.func_name.split('_')
+    name = "%s_name" % resource[resource.__len__()-1]
+    return click.argument(name
+              , type = click.STRING
+              , callback=client_utils.get_attr_id_from_name
+              )(f)
+
+
 def attributes_options(f):
     out = click.option('--attributes', '-a', default=None, type=click.STRING
               , callback=client_utils.validate_attributes
@@ -56,11 +73,11 @@ def file_options(f):
 
 
 def grant_arguments(f):
-    out = click.argument('user_id'
+    out = click.argument('user_name'
               , type = click.STRING
               , callback=client_utils.get_attr_id_from_name
               )(f)
-    out = click.argument('project_id'
+    out = click.argument('project_name'
               , type = click.STRING
               , callback=client_utils.get_attr_id_from_name
               )(f)
@@ -90,4 +107,3 @@ def delete_common_options(f):
     f = file_options(f)
     f = id_options(f)
     return f
-
