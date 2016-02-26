@@ -19,7 +19,7 @@ import sys
 from os_restfulcli.client.controller import ControllerClient
 from os_restfulcli.client.decorators import *
 
-sys.tracebacklimit=0
+#sys.tracebacklimit=0
 
 
 @click.group()

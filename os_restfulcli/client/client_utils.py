@@ -24,8 +24,8 @@ from tabulate import tabulate
 
 auth_variables = ['OS_AUTH_URL',
                   'OS_TOKEN',
-                  'OS_PORT',
-                  "OS_VERSION"
+                  #'OS_PORT',
+                  #"OS_VERSION"
                  ]
 colors = { 'FAIL' : '\033[91m',
            'OK': '\033[92m',

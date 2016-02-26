@@ -38,7 +38,7 @@ class ControllerResource(object):
                                    ' OS_PORT=5000, OS_VERSION=v3, OS_TOKEN=948473890234890')
 
             #self.identity = {'OS_AUTH_URL':'127.0.0.23','OS_PORT': '5000', "OS_VERSION": 'v3','OS_TOKEN':'cb6ec577f8a340f7bf49812aada2cfde'}
-        self.os_helper = OpenStackDriver(self.identity['OS_AUTH_URL'], self.identity['OS_PORT'], self.identity["OS_VERSION"],self.identity['OS_TOKEN'])
+        self.os_helper = OpenStackDriver(self.identity['OS_AUTH_URL'],self.identity['OS_TOKEN'])
 
     def set_resource(self, resource):
         self.resource = resource

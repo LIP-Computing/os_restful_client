@@ -24,10 +24,10 @@ from os_restfulcli.driver import parsers
 class OpenStackDriver(object):
     """Class to interact with the OS API."""
 
-    def __init__(self, endpoint, port, version, token):
+    def __init__(self, endpoint, token=None):
         self.endpoint = endpoint
-        self.version = version
-        self.port = port
+        #self.version = version
+        #self.port = port
         self.token = token
 
     @staticmethod
@@ -61,12 +61,12 @@ class OpenStackDriver(object):
         :returns: a Request object
         """
         server = self.endpoint
-        port = self.port
-        base_url = "/%s" % self.version
-        kwargs = {"http_version": "HTTP/1.1", "server_name": server, "server_port": port}
+        #port = self.port
+        #base_url = "/%s" % self.version
+        #kwargs = {"http_version": "HTTP/1.0", "server_name": server, "server_port": port}
         environ = {"HTTP_X-Auth-Token": self.token}
 
-        new_req = webob.Request.blank(path=path, environ=environ,  base_url=base_url, **kwargs)
+        new_req = webob.Request.blank(path=path, environ=environ,  base_url=server)#, **kwargs)
         #new_req.script_name = base_url
         new_req.query_string = query_string
         new_req.method = method
