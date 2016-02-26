@@ -38,19 +38,19 @@ def test_decorator():
 @openstackcli.group()
 @click.pass_context
 def projects(ctx):
-    """Manages users."""
+    """Manages projects."""
     resource = 'projects'
     ctx.obj = ControllerClient(resource)
 
 
-@projects.command('list')
+@projects.command('list', help="List projects.")
 @list_common_options
 @click.pass_context
 def projects_list(ctx, out):
     ctx.obj.index(out)
 
 
-@projects.command('show',help="Shows a project details")
+@projects.command('show',help="Show a project details.")
 @out_format_option
 @name_argument
 @click.pass_context
@@ -59,7 +59,7 @@ def projects_show(ctx, project_name, out):
     ctx.obj.show(project_name, out)
 
 
-@projects.command('create', help="Select either --attributes or --file input")
+@projects.command('create', help="Create  a a single or group of project. Select either --attributes or --file input.")
 @create_common_options
 @click.pass_context
 def projects_create(ctx, attributes, file, content_format, out):
@@ -67,7 +67,7 @@ def projects_create(ctx, attributes, file, content_format, out):
     ctx.obj.create(attributes, file, out)
 
 
-@projects.command('delete',help="Select either --project_name or --file input")
+@projects.command('delete',help="Delete a single or group of projects. Select either --project_name or --file input.")
 @delete_common_options
 @click.pass_context
 def projects_delete(ctx, project_name, file, content_format, out):
@@ -87,14 +87,14 @@ def users(ctx):
     ctx.obj = ControllerClient(resource)
 
 
-@users.command('list')
+@users.command('list',help="List users.")
 @list_common_options
 @click.pass_context
 def users_list(ctx, out):
     ctx.obj.index(out)
 
 
-@users.command('show',help="Shows user details")
+@users.command('show',help="Show user details.")
 @out_format_option
 @name_argument
 @click.pass_context
@@ -103,7 +103,7 @@ def users_show(ctx, user_name, out):
     ctx.obj.show(user_name, out)
 
 
-@users.command('create', help="Select either --attributes or --file input")
+@users.command('create', help="Create a a single or group of users. Select either --attributes or --file input.")
 @create_common_options
 @click.pass_context
 def users_create(ctx, attributes, file, content_format, out):
@@ -111,7 +111,7 @@ def users_create(ctx, attributes, file, content_format, out):
     ctx.obj.create(attributes, file, out)
 
 
-@users.command('delete',help="Select either --id or --file input")
+@users.command('delete',help="Delete a a single or group of users. Select either --user_name or --file input.")
 @delete_common_options
 @click.pass_context
 def users_delete(ctx, user_name, file, content_format, out):
@@ -127,19 +127,19 @@ def users_delete(ctx, user_name, file, content_format, out):
 @openstackcli.group()
 @click.pass_context
 def roles(ctx):
-    """Manages users."""
+    """Manages roles and grant users in projects."""
     resource = 'roles'
     ctx.obj = ControllerClient(resource)
 
 
-@roles.command('list')
+@roles.command('list', help="List roles.")
 @list_common_options
 @click.pass_context
 def roles_list(ctx, out):
     ctx.obj.index(out)
 
 
-@roles.command('show',help="Shows a role details ")
+@roles.command('show',help="Show role details.")
 @out_format_option
 @name_argument
 @click.pass_context
@@ -148,7 +148,7 @@ def roles_show(ctx, role_name, out):
     ctx.obj.show(role_name, out)
 
 
-@roles.command('create', help="Creates a role")
+@roles.command('create', help="Create a single or group of roles. Select either --attributes or --file input.")
 @create_common_options
 @click.pass_context
 def roles_create(ctx, attributes, file, content_format, out):
@@ -156,7 +156,7 @@ def roles_create(ctx, attributes, file, content_format, out):
     ctx.obj.create(attributes, file, out)
 
 
-@roles.command('delete',help="Deletes role")
+@roles.command('delete',help="Delete a single or group of roles. Select either --role_name or --file input.")
 @delete_common_options
 @click.pass_context
 def roles_delete(ctx, id, file, content_format, out):
@@ -168,7 +168,7 @@ def roles_delete(ctx, id, file, content_format, out):
 #####################################
 
 
-@roles.command('list_grants')
+@roles.command('list_grants', help="List every grant of an user in a project.")
 @grant_arguments
 @list_common_options
 @click.pass_context
@@ -178,7 +178,7 @@ def roles_grant_list(ctx, out, project_name, user_name):
     ctx.obj.index(out)
 
 
-@roles.command('create_grant', help="Grant a user in a project with a specific role")
+@roles.command('create_grant', help="Grant an user in a project with a role.")
 @grant_arguments
 @name_argument
 @out_format_option
@@ -190,7 +190,7 @@ def roles_grant_create(ctx, role_name, project_name, user_name, out):
     ctx.obj.link(role_name, out)
 
 
-@roles.command('delete_grant',help="Deletes grant of a user in a project with a specific role")
+@roles.command('delete_grant',help="Delete grant of an user in a project with a role.")
 @grant_arguments
 @name_argument
 @out_format_option
@@ -201,7 +201,7 @@ def roles_grant_delete(ctx, role_name, out, project_name, user_name):
     ctx.obj.update_path(path)
     ctx.obj.delete(role_name, None, out)
 
-@roles.command('grants_by_project',help="List users granted in a project")
+@roles.command('grants_by_project',help="List users with grants in a project.")
 @name_list_argument
 @out_format_option
 @click.pass_context
@@ -212,7 +212,7 @@ def roles_grant_list_by_project(ctx, project_name, out):
     ctx.obj.update_path(None,'role_assignments')
     ctx.obj.list_roles_by_query(out_format=out, parameters=parameters)
 
-@roles.command('grants_by_user',help="List project granted by a user")
+@roles.command('grants_by_user',help="List projects in which an user has grants.")
 @name_list_argument
 @out_format_option
 @click.pass_context
