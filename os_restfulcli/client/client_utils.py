@@ -18,6 +18,8 @@ import click
 import json
 import yaml
 import os
+import webob
+
 from tabulate import tabulate
 
 auth_variables = ['OS_AUTH_URL',
@@ -162,8 +164,11 @@ def get_id_from_name(ctx, param, value):
     try:
         out = ctx.obj.id_name_translation(ctx.parent.command_path, value)
         return out
-    except ValueError:
-        raise click.BadParameter("Name does not exist" % value)
+    except webob.exc.HTTPUnauthorized as e:
+        raise click.ClickException(e.message)
+
+    except Exception:
+        raise click.BadParameter("Name does not exist")
 
 
 def get_attr_id_from_name(ctx, param, value):
@@ -173,8 +178,11 @@ def get_attr_id_from_name(ctx, param, value):
         resource = "%ss" % param.name.split('_')[0]
         out = ctx.obj.id_name_translation(resource, value)
         return out
-    except ValueError:
-        raise click.BadParameter("Name does not exist" % value)
+    except webob.exc.HTTPUnauthorized as e:
+        raise click.ClickException(e.message)
+
+    except Exception as e:
+        raise click.BadParameter("Name does not exist")
 
 ###################################
 ######### UNUSED #################

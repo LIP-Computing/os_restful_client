@@ -19,7 +19,7 @@ import sys
 from os_restfulcli.client.controller import ControllerClient
 from os_restfulcli.client.decorators import *
 
-#sys.tracebacklimit=0
+sys.tracebacklimit=0
 
 
 @click.group()
@@ -50,7 +50,7 @@ def projects_list(ctx, out):
     ctx.obj.index(out)
 
 
-@projects.command('show',help="Select project identification (ID)")
+@projects.command('show',help="Shows a project details")
 @out_format_option
 @name_argument
 @click.pass_context
@@ -67,12 +67,12 @@ def projects_create(ctx, attributes, file, content_format, out):
     ctx.obj.create(attributes, file, out)
 
 
-@projects.command('delete',help="Select either --id or --file input")
+@projects.command('delete',help="Select either --project_name or --file input")
 @delete_common_options
 @click.pass_context
-def projects_delete(ctx, id, file, content_format, out):
+def projects_delete(ctx, project_name, file, content_format, out):
     """Delete."""
-    ctx.obj.delete(id, file, out)
+    ctx.obj.delete(project_name, file, out)
 
 #####################################
 ############ USERS ##################
@@ -94,7 +94,7 @@ def users_list(ctx, out):
     ctx.obj.index(out)
 
 
-@users.command('show',help="Select user identification (ID)")
+@users.command('show',help="Shows user details")
 @out_format_option
 @name_argument
 @click.pass_context
@@ -114,9 +114,9 @@ def users_create(ctx, attributes, file, content_format, out):
 @users.command('delete',help="Select either --id or --file input")
 @delete_common_options
 @click.pass_context
-def users_delete(ctx, id, file, content_format, out):
+def users_delete(ctx, user_name, file, content_format, out):
     """Delete."""
-    ctx.obj.delete(id, file, out)
+    ctx.obj.delete(user_name, file, out)
 
 
 #####################################
@@ -139,7 +139,7 @@ def roles_list(ctx, out):
     ctx.obj.index(out)
 
 
-@roles.command('show',help="Select user identification (ID)")
+@roles.command('show',help="Shows a role details ")
 @out_format_option
 @name_argument
 @click.pass_context
@@ -148,7 +148,7 @@ def roles_show(ctx, role_name, out):
     ctx.obj.show(role_name, out)
 
 
-@roles.command('create', help="Select either --attributes or --file input")
+@roles.command('create', help="Creates a role")
 @create_common_options
 @click.pass_context
 def roles_create(ctx, attributes, file, content_format, out):
@@ -156,7 +156,7 @@ def roles_create(ctx, attributes, file, content_format, out):
     ctx.obj.create(attributes, file, out)
 
 
-@roles.command('delete',help="Select either --id or --file input")
+@roles.command('delete',help="Deletes role")
 @delete_common_options
 @click.pass_context
 def roles_delete(ctx, id, file, content_format, out):
@@ -178,7 +178,7 @@ def roles_grant_list(ctx, out, project_name, user_name):
     ctx.obj.index(out)
 
 
-@roles.command('create_grant', help="Select project_id, user_id and role_id")
+@roles.command('create_grant', help="Grant a user in a project with a specific role")
 @grant_arguments
 @name_argument
 @out_format_option
@@ -190,7 +190,7 @@ def roles_grant_create(ctx, role_name, project_name, user_name, out):
     ctx.obj.link(role_name, out)
 
 
-@roles.command('delete_grant',help="Select either --id or --file input")
+@roles.command('delete_grant',help="Deletes grant of a user in a project with a specific role")
 @grant_arguments
 @name_argument
 @out_format_option
@@ -201,7 +201,7 @@ def roles_grant_delete(ctx, role_name, out, project_name, user_name):
     ctx.obj.update_path(path)
     ctx.obj.delete(role_name, None, out)
 
-@roles.command('grants_by_project',help="Select project id")
+@roles.command('grants_by_project',help="List users granted in a project")
 @name_list_argument
 @out_format_option
 @click.pass_context
@@ -212,7 +212,7 @@ def roles_grant_list_by_project(ctx, project_name, out):
     ctx.obj.update_path(None,'role_assignments')
     ctx.obj.list_roles_by_query(out_format=out, parameters=parameters)
 
-@roles.command('grants_by_user',help="Select project id")
+@roles.command('grants_by_user',help="List project granted by a user")
 @name_list_argument
 @out_format_option
 @click.pass_context

@@ -37,6 +37,16 @@ def id_argument(f):
               , callback=client_utils.get_id_from_name
               )(f)
 
+def name_options(f):
+    name = "%s_name" % f.func_name.split('_')[0][:-1]
+    opt = "--%s" % name
+    opt_short = "-%s" % name[0]
+    return click.option(opt, opt_short, default=None
+              , type = click.STRING
+              , callback=client_utils.get_attr_id_from_name
+              , help='Identification of project')(f)
+
+
 
 def name_argument(f):
     name = "%s_name" % f.func_name.split('_')[0][:-1]
@@ -105,5 +115,5 @@ def create_common_options(f):
 def delete_common_options(f):
     f = out_format_option(f)
     f = file_options(f)
-    f = id_options(f)
+    f = name_options(f)
     return f

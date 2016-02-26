@@ -51,7 +51,7 @@ class TestIntegrationProjectCommand(os_restfulcli.tests.TestCaseCommandLine):
         #id = str(result.output_bytes).strip().split("\n")[2].split("|")[5].strip()
         ids = parsers.json_load_from_client(result.output_bytes)
         for id in ids:
-            result_delete = self.runner.invoke(cli.users, ['delete', '--id=%s' % id])
+            result_delete = self.runner.invoke(cli.users, ['delete', '--user_name=%s' % id])
             self.assertEqual(result_delete.exit_code,0)
             self.assertIsNone(result_delete.exception)
 
@@ -64,7 +64,7 @@ class TestIntegrationProjectCommand(os_restfulcli.tests.TestCaseCommandLine):
         # var = "[{u'project': {u'description': u'', u'links': {u'self': u'http://localhost/v3/projects/e2b42b2aa5d5444f833b94d973571b63'}, u'enabled': True, u'id': u'e2b42b2aa5d5444f833b94d973571b63', u'parent_id': None, u'domain_id': u'default', u'name': u'name3'}}]"
         # result_dict = parsers.json_load_from_os_string(var)
         for id in ids:
-            result_delete = self.runner.invoke(cli.users, ['delete', '--id=%s' % id])
+            result_delete = self.runner.invoke(cli.users, ['delete', '--user_name=%s' % id])
             self.assertEqual(result_delete.exit_code,0)
             self.assertIsNone(result_delete.exception)
 

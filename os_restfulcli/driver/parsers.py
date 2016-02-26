@@ -66,7 +66,7 @@ def json_load_from_client(string_cli):
     ids = []
     line = 3
     while line < cadena.__len__():
-        ids.append(cadena[line].split("|")[1].strip())
+        ids.append(cadena[line].split("|")[2].strip())
         line += 1
     return ids
 

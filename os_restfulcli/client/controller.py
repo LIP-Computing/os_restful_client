@@ -249,6 +249,7 @@ class ControllerClient(object):
          parameters["name"] = name
          path = "/%s" % resource
          result = self.control.custom_query(path, custom_resource=resource, parameters=parameters)
+
          id = result[0]['id']
          return id
 

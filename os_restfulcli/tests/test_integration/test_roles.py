@@ -38,6 +38,11 @@ class TestIntegrationRolesommand(os_restfulcli.tests.TestCaseCommandLine):
         self.assertEqual(result.exit_code,0)
         self.assertIsNone(result.exception)
 
+    def test_rol_show_wrong(self):
+        result = self.runner.invoke(cli.roles, ['show','adminee'])
+        self.assertEqual(result.exit_code,2)
+      #  self.assertIsNone(result.exception)
+
     def test_rol_list(self):
         result = self.runner.invoke(cli.roles, ['list'])
         self.assertEqual(result.exit_code,0)
