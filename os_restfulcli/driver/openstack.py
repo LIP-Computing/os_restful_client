@@ -122,7 +122,10 @@ class OpenStackDriver(object):
         :param parameters: parameters to filter results
         """
         os_req = self._make_get_request(path, parameters)
-        response = os_req.get_response(None)
+        try:
+            response = os_req.get_response(None)
+        except Exception as e:
+             response = webob.Response(status=500, body=str(e))
         json_response = self.get_from_response(response, {})
         return json_response
 
@@ -132,9 +135,11 @@ class OpenStackDriver(object):
         :param parameters: parameters with values for the new resource
         """
         req = self._make_create_request(path, parameters)
-        response = req.get_response(None)
+        try:
+            response = req.get_response(None)
+        except Exception as e:
+             response = webob.Response(status=500, body=str(e))
         json_response = self.get_from_response(response, {})
-
         return json_response
 
     def delete(self, path):
@@ -142,7 +147,10 @@ class OpenStackDriver(object):
         :param path:
         """
         req = self._make_delete_request(path)
-        response = req.get_response(None)
+        try:
+            response = req.get_response(None)
+        except Exception as e:
+             response = webob.Response(status=500, body=str(e))
         json_response = self.get_from_response(response, {})
         return json_response
 
@@ -152,7 +160,10 @@ class OpenStackDriver(object):
         :param parameters: parameters with values to filter
         """
         req = self._make_get_request(path, parameters)
-        response = req.get_response(None)
+        try:
+            response = req.get_response(None)
+        except Exception as e:
+             response = webob.Response(status=500, body=str(e))
         json_response = self.get_from_response(response, {})
         return json_response
 
@@ -161,9 +172,11 @@ class OpenStackDriver(object):
         :param path: the incoming request
         """
         req = self._make_put_request(path)
-        response = req.get_response(None)
+        try:
+            response = req.get_response(None)
+        except Exception as e:
+             response = webob.Response(status=500, body=str(e))
         json_response = self.get_from_response(response, {})
-
         return json_response
 
     #

@@ -23,7 +23,4 @@ def configure_env(project_id):
     token = app.auth_token # fixme(jorgesece): check what to do with auth ¿password or token?
 
     os.environ.data['OS_AUTH_URL'] = 'http://127.0.0.23:5000/v3' #'https://nimbus.ncg.ingrid.pt:5000/v3' # '127.0.0.23'
-    #os.environ.data['OS_AUTH_URL'] = 'https:/:nimbus.ncg.ingrid.pt:5000/v3'
-    #os.environ.data['OS_PORT'] = '5000'
-    #os.environ.data['OS_VERSION'] = 'v3'
-    os.environ.data['OS_TOKEN'] = token  #'14d65941ebd07505d2e4'
+    os.environ.data['OS_TOKEN'] = token

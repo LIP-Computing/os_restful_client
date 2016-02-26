@@ -49,8 +49,8 @@ def exception_from_response(response):
         501: webob.exc.HTTPNotImplemented,
         503: webob.exc.HTTPServiceUnavailable,
     }
-    code = response.status_int
     try:
+        code = response.status_int
         message = response.json_body.popitem()[1].get("message")
         title = response.json_body.popitem()[1].get("title")
     except Exception:
